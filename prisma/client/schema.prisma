@@ -1,0 +1,142 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  PRIVATE_SELLER
+  INDEPENDENT_REALTOR
+  AGENCY_AGENT
+  PRIVATE_LANDLORD
+  PROPERTY_MANAGER
+  LETTING_AGENT
+}
+
+enum PropertyType {
+  residential
+  commercial
+  land
+  industrial
+}
+
+enum ListingStatus {
+  draft
+  active
+  sold
+  leased
+  archived
+}
+
+model Profile {
+  id               String        @id @default(uuid())
+  fullName         String?       @map("full_name")
+  username         String?       @unique
+  role             UserRole      @default(PRIVATE_SELLER)
+  trustScore       Float         @default(0) @map("trust_score")
+  isVerified       Boolean       @default(false) @map("is_verified")
+  avatarUrl        String?       @map("avatar_url")
+  listings         Listing[]
+  transactions     Transaction[]
+  sentMessages     Message[]     @relation("SentMessages")
+  receivedMessages Message[]     @relation("ReceivedMessages")
+  requestedCalls   VideoCall[]   @relation("RequestedCalls")
+  ownedCalls       VideoCall[]   @relation("OwnedCalls")
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
+
+  @@map("profiles")
+}
+
+model Listing {
+  id           String        @id @default(uuid())
+  ownerId      String        @map("owner_id")
+  owner        Profile       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  title        String
+  description  String?
+  price        Decimal
+  currency     String        @default("USD")
+  propertyType PropertyType  @map("property_type")
+  listingType  String        @map("listing_type") // 'sale' or 'rent'
+  status       ListingStatus @default(draft)
+  address      String?
+  city         String?
+  country      String?
+  latitude     Float?
+  longitude    Float?
+  amenities    Json          @default("[]")
+  images       String[]      @default([])
+  isFeatured   Boolean       @default(false) @map("is_featured")
+  translations Json          @default("{}")
+  expiresAt    DateTime?     @map("expires_at")
+  transactions Transaction[]
+  videoCalls   VideoCall[]
+  messages     Message[]
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  @@map("listings")
+}
+
+model Transaction {
+  id         String   @id @default(uuid())
+  listingId  String?  @map("listing_id")
+  listing    Listing? @relation(fields: [listingId], references: [id], onDelete: SetNull)
+  userId     String?  @map("user_id")
+  user       Profile? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  amount     Decimal
+  currency   String
+  provider   String
+  providerId String?  @unique @map("provider_id")
+  status     String
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("transactions")
+}
+
+model VideoCall {
+  id          String    @id @default(uuid())
+  listingId   String?   @map("listing_id")
+  listing     Listing?  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  requesterId String?   @map("requester_id")
+  requester   Profile?  @relation("RequestedCalls", fields: [requesterId], references: [id])
+  ownerId     String?   @map("owner_id")
+  owner       Profile?  @relation("OwnedCalls", fields: [ownerId], references: [id])
+  roomName    String    @unique @map("room_name")
+  status      String    @default("requested")
+  scheduledAt DateTime? @map("scheduled_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@map("video_calls")
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  listingId  String?  @map("listing_id")
+  listing    Listing? @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  senderId   String   @map("sender_id")
+  sender     Profile  @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId String   @map("receiver_id")
+  receiver   Profile  @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  content    String
+  isRead     Boolean  @default(false) @map("is_read")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("messages")
+}
+
+model SiteSettings {
+  id           String   @id @default("global") // Singleton pattern
+  heroTitle    String
+  heroSubtitle String
+  heroImageUrl String   @map("hero_image_url")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("site_settings")
+}
