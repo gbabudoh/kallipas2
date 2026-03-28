@@ -7,9 +7,9 @@ export async function GET() {
       {
         id: 'mail-1',
         sender: 'Kallipas Administration',
-        subject: 'Welcome to the Premium Ecosystem',
-        preview: 'We are thrilled to have you onboard. Your account has been upgraded...',
-        content: 'Dear User,\n\nWe are thrilled to have you onboard. Your account has been upgraded to the Premium tier. You now have access to exclusive listings and advanced analytics.\n\nBest regards,\nKallipas Team',
+        subject: 'Welcome to Kallipas',
+        preview: 'We are thrilled to have you onboard. Your account is now active...',
+        content: 'Dear User,\n\nWe are thrilled to have you onboard. Your account is now active. You now have access to listings and advanced analytics.\n\nBest regards,\nKallipas Team',
         date: new Date(Date.now() - 3600000).toISOString(),
         isRead: false,
         priority: 'high'
@@ -30,8 +30,8 @@ export async function GET() {
         id: 'mail-sent-1',
         recipient: 'Legal Department',
         subject: 'Listing Verification Documents',
-        preview: 'Attached are the required documents for the 123 Luxury Ave listing...',
-        content: 'To whom it may concern,\n\nAttached are the required documents for the 123 Luxury Ave listing. Please let me know once they have been reviewed.\n\nRegards,\nSarah',
+        preview: 'Attached are the required documents for the 123 Maple Street listing...',
+        content: 'To whom it may concern,\n\nAttached are the required documents for the 123 Maple Street listing. Please let me know once they have been reviewed.\n\nRegards,\nSarah',
         date: new Date(Date.now() - 172800000).toISOString(),
       }
     ]

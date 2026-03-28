@@ -1,11 +1,12 @@
 import prisma from '@/lib/prisma'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { getServerT } from '@/lib/i18n/server'
 import { 
-  PlusSquare, 
-  TrendingUp, 
-  Users, 
-  Eye, 
+  PlusSquare,
+  TrendingUp,
+  Users,
+  Eye,
   Globe,
   Briefcase,
   Key,
@@ -13,7 +14,10 @@ import {
   Building,
   Scale,
   Map,
-  FileText
+  FileText,
+  Heart,
+  CalendarDays,
+  Search,
 } from 'lucide-react'
 
 const ROLE_TO_SEED_USER: Record<string, string> = {
@@ -24,66 +28,76 @@ const ROLE_TO_SEED_USER: Record<string, string> = {
   'property-manager': 'demo_manager',
   'letting-agent': 'demo_letting',
   'legal-agent': 'demo_legal',
-  'surveyor': 'demo_surveyor'
+  'surveyor': 'demo_surveyor',
+  'buyer': 'demo_buyer',
 }
 
 export default async function DashboardPage({ params }: { params: Promise<{ role: string }> }) {
   const { role } = await params
   const username = ROLE_TO_SEED_USER[role]
-  
+
   if (!username) {
     redirect('/dashboard')
   }
 
-  const profile = await prisma.profile.findUnique({
-    where: { username }
-  })
+  const [profile, t] = await Promise.all([
+    prisma.profile.findUnique({ where: { username } }),
+    getServerT(),
+  ])
+  const s = t.dashboard.stats
 
   const getRoleStats = () => {
     switch (role) {
       case 'surveyor':
         return [
-          { label: 'Pending Inspections', value: '4', icon: Map, trend: '+1 New' },
-          { label: 'Completed Reports', value: '128', icon: FileText, trend: '+12%' },
-          { label: 'Client Rating', value: '4.9', icon: TrendingUp, trend: 'Top 5%' },
-          { label: 'Profile Views', value: '342', icon: Eye, trend: '+8%' },
+          { label: s.pendingInspections, value: '4', icon: Map, trend: '+1 New' },
+          { label: s.completedReports, value: '128', icon: FileText, trend: '+12%' },
+          { label: s.clientRating, value: '4.9', icon: TrendingUp, trend: 'Top 5%' },
+          { label: s.profileViews, value: '342', icon: Eye, trend: '+8%' },
         ]
       case 'legal-agent':
         return [
-          { label: 'Active Contracts', value: '12', icon: FileText, trend: '+3' },
-          { label: 'Escrow Holdings', value: '$1.4M', icon: Scale, trend: '+5%' },
-          { label: 'Client Queries', value: '8', icon: Users, trend: '-2' },
-          { label: 'Success Rate', value: '99%', icon: TrendingUp, trend: 'High' },
+          { label: s.activeContracts, value: '12', icon: FileText, trend: '+3' },
+          { label: s.escrowHoldings, value: '$1.4M', icon: Scale, trend: '+5%' },
+          { label: s.clientQueries, value: '8', icon: Users, trend: '-2' },
+          { label: s.successRate, value: '99%', icon: TrendingUp, trend: 'High' },
         ]
       case 'property-manager':
       case 'letting-agent':
         return [
-          { label: 'Managed Properties', value: '45', icon: Building, trend: '+2' },
-          { label: 'Active Tenants', value: '112', icon: Users, trend: '+5' },
-          { label: 'Maintenance Issues', value: '3', icon: Home, trend: '-1' },
-          { label: 'Occupancy Rate', value: '96%', icon: TrendingUp, trend: '+2%' },
+          { label: s.managedProperties, value: '45', icon: Building, trend: '+2' },
+          { label: s.activeTenants, value: '112', icon: Users, trend: '+5' },
+          { label: s.maintenanceIssues, value: '3', icon: Home, trend: '-1' },
+          { label: s.occupancyRate, value: '96%', icon: TrendingUp, trend: '+2%' },
         ]
       case 'private-landlord':
         return [
-          { label: 'Owned Properties', value: '4', icon: Key, trend: '0' },
-          { label: 'Total Enquiries', value: '28', icon: Users, trend: '+12' },
-          { label: 'Monthly Yield', value: '+$8.2k', icon: TrendingUp, trend: '+4%' },
-          { label: 'Listing Views', value: '1,204', icon: Eye, trend: '+15%' },
+          { label: s.ownedProperties, value: '4', icon: Key, trend: '0' },
+          { label: s.totalEnquiries, value: '28', icon: Users, trend: '+12' },
+          { label: s.monthlyYield, value: '+$8.2k', icon: TrendingUp, trend: '+4%' },
+          { label: s.listingViews, value: '1,204', icon: Eye, trend: '+15%' },
         ]
       case 'agency-agent':
       case 'independent-realtor':
         return [
-          { label: 'Active Listings', value: '18', icon: PlusSquare, trend: '+4' },
-          { label: 'Client Leads', value: '42', icon: Users, trend: '+18%' },
-          { label: 'Closing Rate', value: '8.4%', icon: Briefcase, trend: '+1.2%' },
-          { label: 'Total Sales Vol', value: '$4.2M', icon: TrendingUp, trend: 'Top 10%' },
+          { label: s.activeListings, value: '18', icon: PlusSquare, trend: '+4' },
+          { label: s.clientLeadsCount, value: '42', icon: Users, trend: '+18%' },
+          { label: s.closingRate, value: '8.4%', icon: Briefcase, trend: '+1.2%' },
+          { label: s.totalSalesVol, value: '$4.2M', icon: TrendingUp, trend: 'Top 10%' },
+        ]
+      case 'buyer':
+        return [
+          { label: s.savedPropertiesCount, value: '12', icon: Heart, trend: '+3' },
+          { label: s.activeEnquiries, value: '5', icon: Search, trend: '+2' },
+          { label: s.viewingsBooked, value: '3', icon: CalendarDays, trend: 'This Week' },
+          { label: s.budgetTracked, value: '$680k', icon: TrendingUp, trend: 'On Target' },
         ]
       default: // private-seller
         return [
-          { label: 'Active Listings', value: '1', icon: PlusSquare, trend: 'New' },
-          { label: 'Total Views', value: '842', icon: Eye, trend: '+24%' },
-          { label: 'Interested Buyers', value: '12', icon: Users, trend: '+3' },
-          { label: 'Trust Score', value: String(profile?.trustScore ?? '10'), icon: TrendingUp, trend: 'Global Avg' },
+          { label: s.activeListings, value: '1', icon: PlusSquare, trend: 'New' },
+          { label: s.listingViews, value: '842', icon: Eye, trend: '+24%' },
+          { label: s.totalEnquiries, value: '12', icon: Users, trend: '+3' },
+          { label: s.clientRating, value: String(profile?.trustScore ?? '10'), icon: TrendingUp, trend: 'Global Avg' },
         ]
     }
   }
@@ -96,14 +110,14 @@ export default async function DashboardPage({ params }: { params: Promise<{ role
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
         <div>
           <h1 className="text-5xl font-black tracking-tight text-slate-900 mb-3 italic">
-            Welcome back, <span className="text-[#0eaa99] italic drop-shadow-sm">{profile?.fullName || 'User'}</span>
+            {t.dashboard.welcomeBack} <span className="text-[#0eaa99] italic drop-shadow-sm">{profile?.fullName || 'User'}</span>
           </h1>
           <div className="flex items-center gap-4">
             <span className="px-4 py-1.5 rounded-full bg-[#0eaa99]/10 text-[#0eaa99] text-[10px] font-black uppercase tracking-[0.3em] border border-[#0eaa99]/20 shadow-sm">
               {role.replace('-', ' ')}
             </span>
             <div className="w-1.5 h-1.5 rounded-full bg-[#0eaa99] animate-pulse" />
-            <span className="text-slate-400 text-xs font-black uppercase tracking-widest">Global Network Perimeter Active</span>
+            <span className="text-slate-400 text-xs font-black uppercase tracking-widest">{t.dashboard.networkActive}</span>
           </div>
         </div>
         
@@ -115,7 +129,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ role
           >
             <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
             <PlusSquare className="w-6 h-6 group-hover:rotate-90 transition-transform duration-500 relative z-10" />
-            <span className="text-lg tracking-tighter relative z-10">Create New Listing</span>
+            <span className="text-lg tracking-tighter relative z-10">{t.dashboard.createNewListing}</span>
           </Link>
         )}
       </div>
@@ -130,12 +144,12 @@ export default async function DashboardPage({ params }: { params: Promise<{ role
               <Globe className="w-12 h-12" />
             </div>
             <div>
-              <h4 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Elevate Your Global Presence</h4>
-              <p className="text-slate-500 text-lg font-medium max-w-lg leading-relaxed">Verified partners achieve <span className="text-[#0eaa99] font-black italic">3x higher engagement</span> across the Kallipas liquidations perimeter.</p>
+              <h4 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">{t.dashboard.elevateTitle}</h4>
+              <p className="text-slate-500 text-lg font-medium max-w-lg leading-relaxed">{t.dashboard.elevateDesc}</p>
             </div>
           </div>
           <button className="mt-8 md:mt-0 px-12 py-5 bg-slate-950 text-white font-black rounded-[2rem] hover:bg-slate-900 transition-all shadow-2xl hover:shadow-slate-300 active:scale-95 relative z-10 uppercase tracking-widest text-xs">
-            Start Verification Portal
+            {t.dashboard.startVerification}
           </button>
         </div>
       )}
@@ -165,34 +179,34 @@ export default async function DashboardPage({ params }: { params: Promise<{ role
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2 glass-card rounded-[3rem] p-12 border-white/60">
           <div className="flex items-center justify-between mb-12">
-            <h3 className="text-3xl font-black tracking-tighter text-slate-950 italic">Global Pulse</h3>
-            <button className="px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest text-[#0eaa99] hover:bg-[#0eaa99]/10 transition-all border border-transparent hover:border-[#0eaa99]/20 active:scale-95 shadow-sm">Audit Workspace Logs</button>
+            <h3 className="text-3xl font-black tracking-tighter text-slate-950 italic">{t.dashboard.globalPulse}</h3>
+            <button className="px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest text-[#0eaa99] hover:bg-[#0eaa99]/10 transition-all border border-transparent hover:border-[#0eaa99]/20 active:scale-95 shadow-sm">{t.dashboard.auditLogs}</button>
           </div>
           <div className="space-y-8">
              <div className="flex flex-col items-center justify-center py-24 text-center">
                 <div className="w-24 h-24 rounded-full bg-slate-50 flex items-center justify-center mb-8 shadow-inner">
                   <Briefcase className="w-12 h-12 text-slate-200" />
                 </div>
-                <p className="text-slate-400 font-bold italic text-lg leading-relaxed">Global perimeter currently synchronized.<br/><span className="text-[10px] font-black uppercase tracking-widest opacity-60">Status: Absolute Zero Notifications</span></p>
+                <p className="text-slate-400 font-bold italic text-lg leading-relaxed">{t.dashboard.globalSynced}<br/><span className="text-[10px] font-black uppercase tracking-widest opacity-60">{t.dashboard.zeroNotifications}</span></p>
              </div>
           </div>
         </div>
 
         <div className="glass-card rounded-[3rem] p-12 bg-gradient-to-b from-white via-white to-slate-50/30 border-white/60">
-          <h3 className="text-3xl font-black tracking-tighter text-slate-950 italic mb-12">Trust Metrics</h3>
+          <h3 className="text-3xl font-black tracking-tighter text-slate-950 italic mb-12">{t.dashboard.trustMetrics}</h3>
           <div className="space-y-10">
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">Liquidator Rating</span>
+              <span className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">{t.dashboard.liquidatorRating}</span>
               <span className={profile?.isVerified ? 'text-[#0eaa99] font-black uppercase text-[10px] tracking-widest' : 'text-orange-500 text-[10px] font-black uppercase tracking-widest'}>
-                {profile?.isVerified ? 'verified partner' : 'identity pending'}
+                {profile?.isVerified ? t.dashboard.verifiedPartner : t.dashboard.identityPending}
               </span>
             </div>
-            
+
             <div className="relative pt-2">
               <div className="flex mb-3 items-center justify-between">
                 <div>
                   <span className="text-[10px] font-black inline-block py-2 px-4 uppercase rounded-full text-[#0eaa99] bg-[#0eaa99]/10 border border-[#0eaa99]/20 shadow-sm">
-                    Workspace Precision
+                    {t.dashboard.workspacePrecision}
                   </span>
                 </div>
                 <div className="text-right">
@@ -217,7 +231,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ role
             
             {!profile?.isVerified && (
                 <button className="w-full py-5 rounded-[1.5rem] bg-white border border-slate-100 shadow-2xl shadow-gray-200/50 hover:shadow-teal-brand/10 hover:border-[#0eaa99]/20 transition-all text-xs font-black uppercase tracking-widest text-[#0eaa99] mt-6 active:scale-95">
-                    Identity Protocol Start
+                    {t.dashboard.identityProtocol}
                 </button>
             )}
           </div>

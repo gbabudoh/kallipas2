@@ -6,6 +6,7 @@ import { Mail, Lock, Loader2, ArrowRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useT } from '@/context/language-context'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -13,6 +14,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'error' | 'success', text: string } | null>(null)
   const router = useRouter()
+  const t = useT()
 
   useEffect(() => {
     localStorage.removeItem('kallipas_role')
@@ -33,7 +35,7 @@ export default function LoginPage() {
       const data = await res.json()
 
       if (!res.ok) {
-        setMessage({ type: 'error', text: data.error || 'Login failed. Please try again.' })
+        setMessage({ type: 'error', text: data.error || t.login.errorDefault })
         return
       }
 
@@ -41,10 +43,10 @@ export default function LoginPage() {
       localStorage.setItem('kallipas_role', roleSlug)
       document.cookie = `kallipas_role=${roleSlug}; path=/; max-age=86400; SameSite=Lax`
 
-      setMessage({ type: 'success', text: 'Identity verified. Entering Kallipas Ecosystem...' })
+      setMessage({ type: 'success', text: t.login.successMsg })
       setTimeout(() => router.push(`/${roleSlug}/dashboard`), 1500)
     } catch {
-      setMessage({ type: 'error', text: 'Unable to connect. Please try again.' })
+      setMessage({ type: 'error', text: t.login.errorNetwork })
     } finally {
       setLoading(false)
     }
@@ -57,7 +59,7 @@ export default function LoginPage() {
       <div className="hidden lg:block w-1/2 relative h-screen">
         <Image 
           src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2000&auto=format&fit=crop"
-          alt="Luxury Architecture"
+          alt="Architecture"
           fill
           priority
           sizes="50vw"
@@ -95,8 +97,8 @@ export default function LoginPage() {
             </div>
 
             <div className="text-center mb-8">
-               <h2 className="text-3xl font-semibold mb-2 tracking-tight">Welcome Back</h2>
-               <p className="text-sm font-medium text-[#1c2312]/50">Log in to your Kallipas profile</p>
+               <h2 className="text-3xl font-semibold mb-2 tracking-tight">{t.login.welcomeBack}</h2>
+               <p className="text-sm font-medium text-[#1c2312]/50">{t.login.subtitle}</p>
             </div>
 
             <AnimatePresence mode="wait">
@@ -123,7 +125,7 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    placeholder="Email Address"
+                    placeholder={t.login.email}
                     className="w-full bg-white/40 border border-[#1c2312]/10 rounded-xl py-4 pl-12 pr-4 text-sm focus:outline-none focus:border-[#0eab9b] focus:bg-white/80 transition-all placeholder-[#1c2312]/20 font-medium shadow-sm"
                   />
                 </div>
@@ -137,7 +139,7 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    placeholder="Password"
+                    placeholder={t.login.password}
                     className="w-full bg-white/40 border border-[#1c2312]/10 rounded-xl py-4 pl-12 pr-4 text-sm focus:outline-none focus:border-[#0eab9b] focus:bg-white/80 transition-all placeholder-[#1c2312]/20 font-medium shadow-sm"
                   />
                 </div>
@@ -151,7 +153,7 @@ export default function LoginPage() {
                 >
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                     <>
-                      <span>Sign In</span>
+                      <span>{t.login.signIn}</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </>
                   )}
@@ -160,21 +162,21 @@ export default function LoginPage() {
             </form>
 
             <div className="mt-6 flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-[#1c2312]/30 px-1">
-              <Link href="#" className="hover:text-[#0eab9b] transition-colors cursor-pointer">Forgot Password?</Link>
-              <Link href="/register" className="hover:text-[#0eab9b] transition-colors cursor-pointer">Create Account</Link>
+              <Link href="#" className="hover:text-[#0eab9b] transition-colors cursor-pointer">{t.login.forgotPassword}</Link>
+              <Link href="/register" className="hover:text-[#0eab9b] transition-colors cursor-pointer">{t.login.createAccount}</Link>
             </div>
 
             <div className="mt-12 text-center pt-8 border-t border-[#1c2312]/5">
                <p className="text-[10px] font-bold tracking-widest items-center gap-2 flex justify-center uppercase">
-                  <span className="text-[#1c2312]/30">New to Kallipas? Join Us</span>
-                  <Link href="/register" className="text-[#0eab9b] hover:underline cursor-pointer">Create Account</Link>
+                  <span className="text-[#1c2312]/30">{t.login.newToKallipas}</span>
+                  <Link href="/register" className="text-[#0eab9b] hover:underline cursor-pointer">{t.login.createAccount}</Link>
                </p>
             </div>
           </div>
           
           <div className="mt-12 flex justify-center">
              <Link href="/" className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#1c2312]/20 hover:text-[#0eab9b] transition-all flex items-center gap-2 group cursor-pointer">
-                <ArrowRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform cursor-pointer" /> Return Home
+                <ArrowRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform cursor-pointer" /> {t.login.returnHome}
              </Link>
           </div>
         </motion.div>

@@ -1,14 +1,20 @@
 // AI Translation utility using DeepL API (free tier)
 
 export const SUPPORTED_LANGUAGES = [
-  { code: 'EN', name: 'English', flag: '🇬🇧' },
-  { code: 'FR', name: 'French', flag: '🇫🇷' },
-  { code: 'ES', name: 'Spanish', flag: '🇪🇸' },
-  { code: 'AR', name: 'Arabic', flag: '🇸🇦' },
+  { code: 'EN', name: 'English',    flag: '🇬🇧' },
+  { code: 'FR', name: 'French',     flag: '🇫🇷' },
+  { code: 'ES', name: 'Spanish',    flag: '🇪🇸' },
+  { code: 'AR', name: 'Arabic',     flag: '🇸🇦' },
   { code: 'PT', name: 'Portuguese', flag: '🇵🇹' },
-  { code: 'DE', name: 'German', flag: '🇩🇪' },
-  { code: 'ZH', name: 'Chinese', flag: '🇨🇳' },
-  { code: 'JA', name: 'Japanese', flag: '🇯🇵' },
+  { code: 'DE', name: 'German',     flag: '🇩🇪' },
+  { code: 'ZH', name: 'Chinese',    flag: '🇨🇳' },
+  { code: 'JA', name: 'Japanese',   flag: '🇯🇵' },
+  { code: 'RU', name: 'Russian',    flag: '🇷🇺' },
+  { code: 'TR', name: 'Turkish',    flag: '🇹🇷' },
+  { code: 'HI', name: 'Hindi',      flag: '🇮🇳' },
+  { code: 'IT', name: 'Italian',    flag: '🇮🇹' },
+  { code: 'KO', name: 'Korean',     flag: '🇰🇷' },
+  { code: 'NL', name: 'Dutch',      flag: '🇳🇱' },
 ] as const
 
 export type LanguageCode = typeof SUPPORTED_LANGUAGES[number]['code']

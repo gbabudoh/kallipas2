@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic'
 
 const DUMMY_PROPERTIES = [
   { id: '1', title: 'Modern Villa', price: '$1,200,000', lat: 40.7128, lng: -74.0060, type: 'residential' },
-  { id: '2', title: 'Luxury Penthouse', price: '$3,500,000', lat: 40.7589, lng: -73.9851, type: 'residential' },
+  { id: '2', title: 'City Penthouse', price: '$3,500,000', lat: 40.7589, lng: -73.9851, type: 'residential' },
   { id: '3', title: 'Office Complex', price: '$12,000,000', lat: 40.7306, lng: -73.9352, type: 'commercial' },
   { id: '4', title: 'Coastal Estate', price: '$8,900,000', lat: 40.6782, lng: -73.9442, type: 'residential' },
 ]

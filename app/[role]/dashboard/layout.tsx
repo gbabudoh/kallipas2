@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import prisma from '@/lib/prisma'
+import { getServerT } from '@/lib/i18n/server'
 import {
   BarChart3,
   Home,
@@ -17,10 +18,15 @@ import {
   FileText,
   ArrowRight,
   Inbox,
-  ChevronRight
+  ChevronRight,
+  Search,
+  Heart,
+  CalendarDays,
 } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import LogoutButton from '@/components/dashboard/logout-button'
+import DashboardLangSwitcher from '@/components/dashboard/lang-switcher'
+import type { Dict } from '@/lib/i18n'
 
 const ROLE_TO_SEED_USER: Record<string, string> = {
   'private-seller': 'demo_seller',
@@ -30,32 +36,33 @@ const ROLE_TO_SEED_USER: Record<string, string> = {
   'property-manager': 'demo_manager',
   'letting-agent': 'demo_letting',
   'legal-agent': 'demo_legal',
-  'surveyor': 'demo_surveyor'
+  'surveyor': 'demo_surveyor',
+  'buyer': 'demo_buyer',
 }
 
-const getRoleNavItems = (roleSlug: string) => {
+const getRoleNavItems = (roleSlug: string, d: Dict['dashboard']) => {
   const basePrefix = `/${roleSlug}/dashboard`
-  
+
   const commonNav = [
-    { label: 'Overview', icon: BarChart3, href: `${basePrefix}` },
-    { label: 'Messages', icon: MessageSquare, href: `${basePrefix}/messages` },
-    { label: 'Internal Mailbox', icon: Inbox, href: `${basePrefix}/mailbox` },
+    { label: d.overview, icon: BarChart3, href: `${basePrefix}` },
+    { label: d.messages, icon: MessageSquare, href: `${basePrefix}/messages` },
+    { label: d.mailbox, icon: Inbox, href: `${basePrefix}/mailbox` },
   ]
 
   switch (roleSlug) {
     case 'surveyor':
       return [
         commonNav[0],
-        { label: 'Inspections', icon: Map, href: `${basePrefix}/inspections` },
-        { label: 'Valuation Reports', icon: FileText, href: `${basePrefix}/reports` },
+        { label: d.inspections, icon: Map, href: `${basePrefix}/inspections` },
+        { label: d.valuationReports, icon: FileText, href: `${basePrefix}/reports` },
         commonNav[1],
         commonNav[2],
       ]
     case 'legal-agent':
       return [
         commonNav[0],
-        { label: 'Contracts', icon: FileText, href: `${basePrefix}/contracts` },
-        { label: 'Escrow', icon: Scale, href: `${basePrefix}/escrow` },
+        { label: d.contracts, icon: FileText, href: `${basePrefix}/contracts` },
+        { label: d.escrow, icon: Scale, href: `${basePrefix}/escrow` },
         commonNav[1],
         commonNav[2],
       ]
@@ -64,9 +71,9 @@ const getRoleNavItems = (roleSlug: string) => {
     case 'private-landlord':
       return [
         commonNav[0],
-        { label: 'Properties', icon: Building, href: `${basePrefix}/properties` },
-        { label: 'Tenant Apps', icon: Users, href: `${basePrefix}/applications` },
-        { label: 'Maintenance', icon: Settings, href: `${basePrefix}/maintenance` },
+        { label: d.properties, icon: Building, href: `${basePrefix}/properties` },
+        { label: d.tenantApps, icon: Users, href: `${basePrefix}/applications` },
+        { label: d.maintenance, icon: Settings, href: `${basePrefix}/maintenance` },
         commonNav[1],
         commonNav[2],
       ]
@@ -74,18 +81,28 @@ const getRoleNavItems = (roleSlug: string) => {
     case 'independent-realtor':
       return [
         commonNav[0],
-        { label: 'My Listings', icon: Home, href: `${basePrefix}/listings` },
-        { label: 'Client Leads', icon: Users, href: `${basePrefix}/leads` },
-        { label: 'Create Listing', icon: PlusSquare, href: `${basePrefix}/listings/new` },
+        { label: d.myListings, icon: Home, href: `${basePrefix}/listings` },
+        { label: d.clientLeads, icon: Users, href: `${basePrefix}/leads` },
+        { label: d.createListing, icon: PlusSquare, href: `${basePrefix}/listings/new` },
         commonNav[1],
         commonNav[2],
-        { label: 'Video Tours', icon: Video, href: `${basePrefix}/video-calls` },
+        { label: d.videoTours, icon: Video, href: `${basePrefix}/video-calls` },
+      ]
+    case 'buyer':
+      return [
+        commonNav[0],
+        { label: d.browseProperties, icon: Search, href: `${basePrefix}/listings` },
+        { label: d.savedProperties, icon: Heart, href: `${basePrefix}/saved` },
+        { label: d.myEnquiries, icon: FileText, href: `${basePrefix}/enquiries` },
+        { label: d.viewings, icon: CalendarDays, href: `${basePrefix}/viewings` },
+        commonNav[1],
+        commonNav[2],
       ]
     default: // private-seller
       return [
         commonNav[0],
-        { label: 'My Listing', icon: Home, href: `${basePrefix}/listings` },
-        { label: 'Create Listing', icon: PlusSquare, href: `${basePrefix}/listings/new` },
+        { label: d.myListing, icon: Home, href: `${basePrefix}/listings` },
+        { label: d.createListing, icon: PlusSquare, href: `${basePrefix}/listings/new` },
         commonNav[1],
         commonNav[2],
       ]
@@ -110,7 +127,8 @@ export default async function DashboardLayout({
     where: { username }
   })
 
-  const navItems = getRoleNavItems(role)
+  const t = await getServerT()
+  const navItems = getRoleNavItems(role, t.dashboard)
 
   return (
     <div className="flex h-screen bg-mesh-gradient text-slate-900 font-sans selection:bg-[#0eaa99]/30">
@@ -176,7 +194,7 @@ export default async function DashboardLayout({
             >
               <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
               <Globe className="w-4 h-4 relative z-10" />
-              <span className="relative z-10 tracking-tight">Main Website</span>
+              <span className="relative z-10 tracking-tight">{t.dashboard.mainWebsite}</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform relative z-10" />
             </Link>
           )}
@@ -193,15 +211,12 @@ export default async function DashboardLayout({
             <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">
               <span>{role.replace('-', ' ')}</span>
               <ChevronRight className="w-4 h-4" />
-              <span className="text-slate-900">Live Workspace</span>
+              <span className="text-slate-900">{t.dashboard.liveWorkspace}</span>
             </div>
           </div>
           
           <div className="flex items-center gap-8">
-            <button className="flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-white border border-slate-200 hover:border-[#0eaa99]/40 transition-all text-[10px] font-black uppercase tracking-widest shadow-sm group">
-              <Globe className="w-4 h-4 text-[#0eaa99] group-hover:rotate-12 transition-transform" />
-              Global / EN
-            </button>
+            <DashboardLangSwitcher />
             <div className="w-px h-8 bg-slate-100" />
             <Settings className="w-6 h-6 text-slate-300 cursor-pointer hover:text-slate-900 transition-all hover:rotate-90 duration-500" />
           </div>

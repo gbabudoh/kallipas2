@@ -82,7 +82,7 @@ export default function InspectionsPage() {
         </div>
 
         <h3 className="text-4xl font-black tracking-tighter text-slate-950 italic">Surveyor Perimeter Synchronized</h3>
-        <p className="text-slate-500 max-w-xl font-bold text-lg leading-relaxed">No pending inspections require your profile today. Continue maintaining your global excellence by browsing the <span className="text-[#0eaa99]">marketplace</span> for premium opportunities.</p>
+        <p className="text-slate-500 max-w-xl font-bold text-lg leading-relaxed">No pending inspections require your profile today. Continue maintaining your global excellence by browsing the <span className="text-[#0eaa99]">marketplace</span> for new opportunities.</p>
         
         <div className="pt-8">
           <button className="px-14 py-5 bg-white border border-slate-100 text-slate-950 font-black uppercase text-[10px] tracking-[0.3em] rounded-2xl hover:border-[#0eaa99]/40 hover:shadow-2xl shadow-gray-200 transition-all active:scale-95 hover:ring-8 hover:ring-[#0eaa99]/5">

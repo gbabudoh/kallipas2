@@ -3,8 +3,11 @@
 import { Search, Globe, Shield, Zap, ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import type { GlobalSiteSettings } from '@/types/settings'
+import { useT } from '@/context/language-context'
 
 export default function Hero({ settings }: { settings: GlobalSiteSettings }) {
+  const t = useT()
+  const h = t.home
   return (
     <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-[#F2EAE0]/30 min-h-screen flex items-center">
       {/* Dynamic Background Accents */}
@@ -24,15 +27,15 @@ export default function Hero({ settings }: { settings: GlobalSiteSettings }) {
           >
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 border border-[#0eab9b]/20 text-[#0eab9b] text-xs font-bold mb-6 shadow-sm backdrop-blur-md uppercase tracking-wider">
               <Globe className="w-3.5 h-3.5" />
-              Revolutionizing Global Real Estate
+              {h.heroBadge}
             </span>
             
             <h1 className="text-5xl md:text-7xl xl:text-8xl font-black tracking-tight mb-6 leading-[1.05] text-slate-900">
-              {settings.heroTitle}
+              {h.heroTitle}
             </h1>
-            
+
             <p className="text-lg md:text-xl text-slate-600 font-medium max-w-xl mb-10 leading-relaxed">
-              {settings.heroSubtitle}
+              {h.heroSubtitle}
             </p>
 
             {/* Premium Search Capsule */}
@@ -43,12 +46,12 @@ export default function Hero({ settings }: { settings: GlobalSiteSettings }) {
                   <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <input 
                     type="text" 
-                    placeholder="Search city, country, or property..."
+                    placeholder={h.searchPlaceholder}
                     className="w-full bg-transparent border-none focus:ring-0 py-4 pl-12 pr-4 text-slate-800 text-lg placeholder:text-slate-400 font-medium"
                   />
                 </div>
                 <button className="w-full md:w-auto px-8 py-4 bg-[#0eab9b] hover:bg-[#0ca191] text-white font-bold text-lg rounded-[1.5rem] transition-all flex items-center justify-center gap-2 group/btn">
-                  Search
+                  {h.searchBtn}
                   <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
                 </button>
               </div>
@@ -57,9 +60,9 @@ export default function Hero({ settings }: { settings: GlobalSiteSettings }) {
             {/* Feature Pills */}
             <div className="mt-12 flex flex-wrap gap-4">
               {[
-                { icon: Shield, label: 'Verified Sellers' },
-                { icon: Zap, label: 'Instant Video Tours' },
-                { icon: Globe, label: 'Multi-Currency Support' }
+                { icon: Shield, label: h.pill1 },
+                { icon: Zap, label: h.pill2 },
+                { icon: Globe, label: h.pill3 }
               ].map((item, i) => (
                 <motion.div 
                   key={item.label}
@@ -92,17 +95,17 @@ export default function Hero({ settings }: { settings: GlobalSiteSettings }) {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img 
                   src={settings.heroImageUrl} 
-                  alt="Premium Property" 
+                  alt="Property"
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                 />
                 
                 {/* Floating Glass Tag on Image */}
                 <div className="absolute bottom-6 left-6 right-6 p-4 bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl shadow-lg">
                   <p className="text-white text-sm font-bold drop-shadow-md">
-                    Featured Luxury Listing
+                    {h.featuredListing}
                   </p>
                   <p className="text-white/80 text-xs font-medium">
-                    Verified by Kallipas Global
+                    {h.verifiedBy}
                   </p>
                 </div>
               </div>
@@ -115,7 +118,7 @@ export default function Hero({ settings }: { settings: GlobalSiteSettings }) {
               className="absolute -top-6 -left-6 p-4 bg-[#0eab9b] text-white rounded-2xl shadow-xl z-20 flex flex-col items-center"
             >
               <Zap className="w-6 h-6 mb-1" />
-              <span className="text-[10px] font-black uppercase tracking-tighter">Live Now</span>
+              <span className="text-[10px] font-black uppercase tracking-tighter">{h.liveNow}</span>
             </motion.div>
 
             <motion.div 
@@ -128,8 +131,8 @@ export default function Hero({ settings }: { settings: GlobalSiteSettings }) {
                   <Search className="w-5 h-5 text-[#0eab9b]" />
                 </div>
                 <div>
-                  <p className="text-xs font-black text-slate-800 uppercase">A.I. Search</p>
-                  <p className="text-[10px] text-slate-500 font-bold">Matching your vibe...</p>
+                  <p className="text-xs font-black text-slate-800 uppercase">{h.aiSearch}</p>
+                  <p className="text-[10px] text-slate-500 font-bold">{h.aiSearchSub}</p>
                 </div>
               </div>
             </motion.div>

@@ -26,7 +26,7 @@ export default function ListingsPage() {
 
           <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
             <button className="px-6 py-2.5 bg-[#0eaa99] shadow-xl shadow-[#0eaa99]/20 rounded-full text-[10px] font-black uppercase tracking-widest text-white whitespace-nowrap hover:scale-105 transition-transform active:scale-95">All Assets</button>
-            <button className="px-6 py-2.5 bg-white border border-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-[#0eaa99] hover:border-[#0eaa99]/30 transition-all whitespace-nowrap italic">New Luxury</button>
+            <button className="px-6 py-2.5 bg-white border border-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-[#0eaa99] hover:border-[#0eaa99]/30 transition-all whitespace-nowrap italic">New</button>
             <button className="px-6 py-2.5 bg-white border border-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-[#0eaa99] hover:border-[#0eaa99]/30 transition-all whitespace-nowrap">Verified</button>
             <button className="px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-all"><SlidersHorizontal className="w-4 h-4" /></button>
           </div>

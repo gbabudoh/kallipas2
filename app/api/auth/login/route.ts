@@ -11,6 +11,7 @@ const ROLE_TO_SLUG: Record<string, string> = {
   LETTING_AGENT: 'letting-agent',
   LEGAL_AGENT: 'legal-agent',
   SURVEYOR: 'surveyor',
+  BUYER: 'buyer',
 }
 
 export async function POST(req: Request) {

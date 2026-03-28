@@ -2,10 +2,11 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Mail, Lock, Loader2, ArrowRight, User, Phone, Briefcase, Users, Home, Building, Key, Scale, Map } from 'lucide-react'
+import { Mail, Lock, Loader2, ArrowRight, User, Phone, Briefcase, Users, Home, Building, Key, Scale, Map, Search } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useT } from '@/context/language-context'
 
 const ACCOUNT_TYPES = [
   { value: 'PRIVATE_SELLER', label: 'Private Seller', icon: User },
@@ -16,9 +17,11 @@ const ACCOUNT_TYPES = [
   { value: 'LETTING_AGENT', label: 'Letting Agent', icon: Building },
   { value: 'LEGAL_AGENT', label: 'Legal (Attorney/Solicitor/Lawyer)', icon: Scale },
   { value: 'SURVEYOR', label: 'Surveyor', icon: Map },
+  { value: 'BUYER', label: 'Buyer', icon: Search },
 ]
 
 export default function RegisterPage() {
+  const t = useT()
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -48,7 +51,7 @@ export default function RegisterPage() {
     setMessage(null)
 
     if (!accountType) {
-      setMessage({ type: 'error', text: 'Please select an account type to continue.' })
+      setMessage({ type: 'error', text: t.register.errorNoType })
       setLoading(false)
       return
     }
@@ -72,12 +75,12 @@ export default function RegisterPage() {
       const data = await res.json()
 
       if (!res.ok) {
-        setMessage({ type: 'error', text: data.error || 'Registration failed. Please try again.' })
+        setMessage({ type: 'error', text: data.error || t.register.errorDefault })
         setLoading(false)
         return
       }
 
-      setMessage({ type: 'success', text: accountType === 'LEGAL_AGENT' ? 'Solicitor / Attorney / Lawyer Verification Pending. Redirecting...' : 'Identity synchronized. Redirecting...' })
+      setMessage({ type: 'success', text: accountType === 'LEGAL_AGENT' ? t.register.legalSuccessMsg : t.register.successMsg })
       
       // Synchronize to cookie for middleware detection
       if (typeof window !== 'undefined') {
@@ -99,7 +102,7 @@ export default function RegisterPage() {
       <div className="hidden lg:block w-1/3 relative h-screen">
         <Image 
           src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2000&auto=format&fit=crop"
-          alt="Luxury Architecture"
+          alt="Architecture"
           fill
           priority
           sizes="33vw"
@@ -143,10 +146,10 @@ export default function RegisterPage() {
 
             <div className="text-center mb-10">
                <h2 className="text-3xl font-semibold mb-2 tracking-tight uppercase">
-                 {step === 1 ? 'Create Account' : 'Solicitor / Attorney / Lawyer Verification'}
+                 {step === 1 ? t.register.createAccount : t.register.legalTitle}
                </h2>
                <p className="text-sm font-medium text-[#1c2312]/50">
-                 {step === 1 ? 'Join the Kallipas ecosystem' : 'Upload legal credentials for solicitor status'}
+                 {step === 1 ? t.register.subtitle : t.register.legalSubtitle}
                </p>
             </div>
 
@@ -170,7 +173,7 @@ export default function RegisterPage() {
                 <>
                   {/* Account Type Grid */}
                   <div className="space-y-4">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-[#1c2312]/40 ml-1">Select Professional Pillar</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-[#1c2312]/40 ml-1">{t.register.selectPillar}</label>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                       {ACCOUNT_TYPES.map((type) => {
                         const isSelected = accountType === type.value
@@ -187,7 +190,7 @@ export default function RegisterPage() {
                           >
                             <type.icon className={`w-6 h-6 mb-2 transition-colors ${isSelected ? 'text-white' : 'text-[#1c2312]/40 group-hover:text-[#0eab9b]'}`} />
                             <span className={`text-[10px] font-bold uppercase tracking-tighter text-center leading-tight transition-colors ${isSelected ? 'text-white' : 'text-[#1c2312]/60'}`}>
-                              {type.label}
+                              {t.register.accountTypes[type.value as keyof typeof t.register.accountTypes] ?? type.label}
                             </span>
                           </button>
                         )
@@ -203,7 +206,7 @@ export default function RegisterPage() {
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         required
-                        placeholder="Full Name"
+                        placeholder={t.register.fullName}
                         className="w-full bg-white/40 border border-[#1c2312]/10 rounded-xl py-4 pl-12 pr-4 text-sm focus:outline-none focus:border-[#0eab9b] focus:bg-white/80 transition-all placeholder-[#1c2312]/20 font-medium"
                       />
                     </div>
@@ -214,7 +217,7 @@ export default function RegisterPage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        placeholder="Email Address"
+                        placeholder={t.register.email}
                         className="w-full bg-white/40 border border-[#1c2312]/10 rounded-xl py-4 pl-12 pr-4 text-sm focus:outline-none focus:border-[#0eab9b] focus:bg-white/80 transition-all placeholder-[#1c2312]/20 font-medium"
                       />
                     </div>
@@ -227,7 +230,7 @@ export default function RegisterPage() {
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        placeholder="Phone Number (optional)"
+                        placeholder={t.register.phone}
                         className="w-full bg-white/40 border border-[#1c2312]/10 rounded-xl py-4 pl-12 pr-4 text-sm focus:outline-none focus:border-[#0eab9b] focus:bg-white/80 transition-all placeholder-[#1c2312]/20 font-medium"
                       />
                     </div>
@@ -239,7 +242,7 @@ export default function RegisterPage() {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                         minLength={8}
-                        placeholder="Password"
+                        placeholder={t.register.password}
                         className="w-full bg-white/40 border border-[#1c2312]/10 rounded-xl py-4 pl-12 pr-4 text-sm focus:outline-none focus:border-[#0eab9b] focus:bg-white/80 transition-all placeholder-[#1c2312]/20 font-medium"
                       />
                     </div>
@@ -252,7 +255,7 @@ export default function RegisterPage() {
                   className="space-y-6"
                 >
                   <div className="space-y-4">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-[#1c2312]/40 ml-1">Identity Selection</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-[#1c2312]/40 ml-1">{t.register.identitySelection}</label>
                     <div className="grid grid-cols-3 gap-2">
                       {['PASSPORT', 'SSN', 'NATIONAL_ID'].map((type) => (
                         <button
@@ -273,22 +276,22 @@ export default function RegisterPage() {
 
                   <div className="space-y-4">
                      <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-[#1c2312]/40 ml-1">Legal Credentials (Bar License / Solicitor ID)</label>
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-[#1c2312]/40 ml-1">{t.register.legalCredentials}</label>
                         <input
                           type="text"
                           value={legalCredentialUrl}
                           onChange={(e) => setLegalCredentialUrl(e.target.value)}
-                          placeholder="Doc reference or URL (Simulated)"
+                          placeholder={t.register.docPlaceholder}
                           className="w-full mt-2 bg-white/40 border border-[#1c2312]/10 rounded-xl py-4 px-4 text-sm focus:outline-none focus:border-[#0eab9b] transition-all placeholder-[#1c2312]/20 font-medium"
                         />
                      </div>
                      <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-[#1c2312]/40 ml-1">Person Identity (Passport/National ID)</label>
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-[#1c2312]/40 ml-1">{t.register.personIdentity}</label>
                         <input
                           type="text"
                           value={identityDocUrl}
                           onChange={(e) => setIdentityDocUrl(e.target.value)}
-                          placeholder="ID reference or URL (Simulated)"
+                          placeholder={t.register.idPlaceholder}
                           className="w-full mt-2 bg-white/40 border border-[#1c2312]/10 rounded-xl py-4 px-4 text-sm focus:outline-none focus:border-[#0eab9b] transition-all placeholder-[#1c2312]/20 font-medium"
                         />
                      </div>
@@ -299,7 +302,7 @@ export default function RegisterPage() {
                     onClick={() => setStep(1)}
                     className="text-[10px] font-bold uppercase tracking-widest text-[#1c2312]/30 hover:text-[#0eab9b] transition-colors"
                   >
-                    ← Back to Pillar Selection
+                    {t.register.backToPillar}
                   </button>
                 </motion.div>
               )}
@@ -312,7 +315,7 @@ export default function RegisterPage() {
                 >
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                     <>
-                      <span>{accountType === 'LEGAL_AGENT' && step === 1 ? 'Verify Professional Status' : 'Complete Onboarding'}</span>
+                      <span>{accountType === 'LEGAL_AGENT' && step === 1 ? t.register.verifyProfessional : t.register.completeOnboarding}</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </>
                   )}
@@ -322,15 +325,15 @@ export default function RegisterPage() {
 
             <div className="mt-10 text-center pt-8 border-t border-[#1c2312]/5">
                <p className="text-[10px] font-bold tracking-widest items-center gap-2 flex justify-center uppercase">
-                  <span className="text-[#1c2312]/30">Already have an account?</span>
-                  <Link href="/login" className="text-[#0eab9b] hover:underline cursor-pointer">Sign In</Link>
+                  <span className="text-[#1c2312]/30">{t.register.alreadyHaveAccount}</span>
+                  <Link href="/login" className="text-[#0eab9b] hover:underline cursor-pointer">{t.register.signIn}</Link>
                </p>
             </div>
           </div>
           
           <div className="mt-12 flex justify-center">
              <Link href="/" className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#1c2312]/20 hover:text-[#0eab9b] transition-all flex items-center gap-2 group cursor-pointer">
-                <ArrowRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform cursor-pointer" /> Return Home
+                <ArrowRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform cursor-pointer" /> {t.register.returnHome}
              </Link>
           </div>
         </motion.div>

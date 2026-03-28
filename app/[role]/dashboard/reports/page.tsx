@@ -63,7 +63,7 @@ export default function ReportsPage() {
             <span className="text-[10px] font-black px-4 py-1.5 rounded-full bg-purple-50 text-purple-500 border border-purple-100 uppercase tracking-widest shadow-sm">+12% Gain</span>
           </div>
           <p className="text-[10px] text-slate-400 mb-1 font-black uppercase tracking-[0.2em]">Global Trust</p>
-          <h3 className="text-4xl font-black text-slate-950 italic tracking-tighter">Premium</h3>
+          <h3 className="text-4xl font-black text-slate-950 italic tracking-tighter">Verified</h3>
         </div>
 
         <div className="glass-card p-10 rounded-[2.5rem] group hover:border-rose-500/40 transition-all duration-500 relative overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-rose-500/10">

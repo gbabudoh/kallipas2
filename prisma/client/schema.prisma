@@ -19,6 +19,7 @@ enum UserRole {
   LETTING_AGENT
   LEGAL_AGENT
   SURVEYOR
+  BUYER
 }
 
 enum PropertyType {
@@ -26,6 +27,10 @@ enum PropertyType {
   commercial
   land
   industrial
+  business
+  mixed_use
+  holiday
+  agricultural
 }
 
 enum ListingStatus {

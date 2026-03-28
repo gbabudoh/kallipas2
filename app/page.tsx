@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Navbar from "@/components/navigation/navbar";
 import Hero from "@/components/home/hero";
 import Features from "@/components/home/features";
+import Footer from "@/components/home/footer";
 import { getSiteSettings } from "@/app/actions/settings";
 import { Loader2 } from "lucide-react";
 
@@ -33,22 +34,7 @@ export default function Home() {
         </Suspense>
         <Features />
         
-        {/* Footer */}
-        <footer className="py-12 border-t border-[#0eab9b]/20 text-center">
-          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-[#0eab9b] rounded-lg flex items-center justify-center font-bold text-white text-sm shadow-sm">K</div>
-              <span className="font-bold tracking-tight text-slate-800">Kallipas</span>
-            </div>
-            <p className="text-slate-500 text-sm font-medium">
-              © 2026 Kallipas Global. All rights reserved.
-            </p>
-            <div className="flex gap-6">
-              <a href="#" className="text-slate-500 hover:text-[#0eab9b] transition-colors text-sm font-medium">Privacy</a>
-              <a href="#" className="text-slate-500 hover:text-[#0eab9b] transition-colors text-sm font-medium">Terms</a>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </main>
     </div>
   );

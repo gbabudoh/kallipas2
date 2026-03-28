@@ -2,54 +2,28 @@
 
 import { Languages, ShieldCheck, Video, CreditCard, LayoutDashboard, Search } from 'lucide-react'
 import { motion } from 'framer-motion'
-
-const features = [
-  {
-    title: 'AI Translation',
-    description: 'Break language barriers with real-time, context-aware translations for every listing.',
-    icon: Languages,
-    color: 'blue'
-  },
-  {
-    title: 'Verified Listings',
-    description: 'Every private seller undergoes a strict KYC process for a secure global marketplace.',
-    icon: ShieldCheck,
-    color: 'indigo'
-  },
-  {
-    title: 'Live Video Tours',
-    description: 'Schedule HD video calls directly with owners through our integrated LiveKit system.',
-    icon: Video,
-    color: 'blue'
-  },
-  {
-    title: 'Flat $25 Fee',
-    description: 'No hidden percentages. List your property globally for a simple, one-time verified fee.',
-    icon: CreditCard,
-    color: 'indigo'
-  },
-  {
-    title: 'Expert Dashboard',
-    description: 'Advanced tools tailored for private sellers, realtors, and agencies alike.',
-    icon: LayoutDashboard,
-    color: 'blue'
-  },
-  {
-    title: 'Smart Search',
-    description: 'Discovery reimagined with advanced filters tailored for global property seekers.',
-    icon: Search,
-    color: 'indigo'
-  }
-]
+import { useT } from '@/context/language-context'
 
 export default function Features() {
+  const t = useT()
+  const h = t.home
+
+  const features = [
+    { title: h.f1Title, description: h.f1Desc, icon: Languages, color: 'blue' },
+    { title: h.f2Title, description: h.f2Desc, icon: ShieldCheck, color: 'indigo' },
+    { title: h.f3Title, description: h.f3Desc, icon: Video, color: 'blue' },
+    { title: h.f4Title, description: h.f4Desc, icon: CreditCard, color: 'indigo' },
+    { title: h.f5Title, description: h.f5Desc, icon: LayoutDashboard, color: 'blue' },
+    { title: h.f6Title, description: h.f6Desc, icon: Search, color: 'indigo' },
+  ]
+
   return (
     <section className="py-24 bg-transparent relative z-10">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-slate-800">Reimagining Real Estate</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-slate-800">{h.featuresHeading}</h2>
           <p className="text-slate-600 font-medium max-w-2xl mx-auto text-lg">
-            Powerful tools and global infrastructure built for the most ambitious property seekers and sellers.
+            {h.featuresSubtitle}
           </p>
         </div>
 

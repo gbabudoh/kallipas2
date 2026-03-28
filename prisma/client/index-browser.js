@@ -236,14 +236,19 @@ exports.UserRole = exports.$Enums.UserRole = {
   PROPERTY_MANAGER: 'PROPERTY_MANAGER',
   LETTING_AGENT: 'LETTING_AGENT',
   LEGAL_AGENT: 'LEGAL_AGENT',
-  SURVEYOR: 'SURVEYOR'
+  SURVEYOR: 'SURVEYOR',
+  BUYER: 'BUYER'
 };
 
 exports.PropertyType = exports.$Enums.PropertyType = {
   residential: 'residential',
   commercial: 'commercial',
   land: 'land',
-  industrial: 'industrial'
+  industrial: 'industrial',
+  business: 'business',
+  mixed_use: 'mixed_use',
+  holiday: 'holiday',
+  agricultural: 'agricultural'
 };
 
 exports.ListingStatus = exports.$Enums.ListingStatus = {

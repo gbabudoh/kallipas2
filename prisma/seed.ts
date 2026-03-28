@@ -88,6 +88,16 @@ async function main() {
       isVerified: true,
       avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sam',
     },
+    {
+      username: 'demo_buyer',
+      email: 'buyer@kallipas.com',
+      password: hashedPassword,
+      fullName: 'Ben (Buyer)',
+      role: UserRole.BUYER,
+      trustScore: 4.2,
+      isVerified: true,
+      avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ben',
+    },
   ]
 
   for (const user of demoUsers) {

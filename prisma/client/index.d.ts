@@ -56,7 +56,8 @@ export namespace $Enums {
   PROPERTY_MANAGER: 'PROPERTY_MANAGER',
   LETTING_AGENT: 'LETTING_AGENT',
   LEGAL_AGENT: 'LEGAL_AGENT',
-  SURVEYOR: 'SURVEYOR'
+  SURVEYOR: 'SURVEYOR',
+  BUYER: 'BUYER'
 };
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
@@ -66,7 +67,11 @@ export const PropertyType: {
   residential: 'residential',
   commercial: 'commercial',
   land: 'land',
-  industrial: 'industrial'
+  industrial: 'industrial',
+  business: 'business',
+  mixed_use: 'mixed_use',
+  holiday: 'holiday',
+  agricultural: 'agricultural'
 };
 
 export type PropertyType = (typeof PropertyType)[keyof typeof PropertyType]
