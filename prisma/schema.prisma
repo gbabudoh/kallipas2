@@ -17,6 +17,8 @@ enum UserRole {
   PRIVATE_LANDLORD
   PROPERTY_MANAGER
   LETTING_AGENT
+  LEGAL_AGENT
+  SURVEYOR
 }
 
 enum PropertyType {
@@ -38,9 +40,16 @@ model Profile {
   id           String        @id @default(uuid())
   fullName     String?       @map("full_name")
   username     String?       @unique
+  email        String?       @unique
+  password     String?
+  phone        String?       @map("phone")
   role         UserRole      @default(PRIVATE_SELLER)
   trustScore   Float         @default(0) @map("trust_score")
   isVerified   Boolean       @default(false) @map("is_verified")
+  verificationStatus String   @default("UNVERIFIED") @map("verification_status")
+  legalCredentialUrl String?  @map("legal_credential_url")
+  identityDocUrl     String?  @map("identity_doc_url")
+  identityType       String?  @map("identity_type") // PASSPORT, SSN, NATIONAL_ID
   avatarUrl    String?       @map("avatar_url")
   listings     Listing[]
   transactions Transaction[]

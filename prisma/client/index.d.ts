@@ -54,7 +54,9 @@ export namespace $Enums {
   AGENCY_AGENT: 'AGENCY_AGENT',
   PRIVATE_LANDLORD: 'PRIVATE_LANDLORD',
   PROPERTY_MANAGER: 'PROPERTY_MANAGER',
-  LETTING_AGENT: 'LETTING_AGENT'
+  LETTING_AGENT: 'LETTING_AGENT',
+  LEGAL_AGENT: 'LEGAL_AGENT',
+  SURVEYOR: 'SURVEYOR'
 };
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
@@ -1519,9 +1521,16 @@ export namespace Prisma {
     id: string | null
     fullName: string | null
     username: string | null
+    email: string | null
+    password: string | null
+    phone: string | null
     role: $Enums.UserRole | null
     trustScore: number | null
     isVerified: boolean | null
+    verificationStatus: string | null
+    legalCredentialUrl: string | null
+    identityDocUrl: string | null
+    identityType: string | null
     avatarUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -1531,9 +1540,16 @@ export namespace Prisma {
     id: string | null
     fullName: string | null
     username: string | null
+    email: string | null
+    password: string | null
+    phone: string | null
     role: $Enums.UserRole | null
     trustScore: number | null
     isVerified: boolean | null
+    verificationStatus: string | null
+    legalCredentialUrl: string | null
+    identityDocUrl: string | null
+    identityType: string | null
     avatarUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -1543,9 +1559,16 @@ export namespace Prisma {
     id: number
     fullName: number
     username: number
+    email: number
+    password: number
+    phone: number
     role: number
     trustScore: number
     isVerified: number
+    verificationStatus: number
+    legalCredentialUrl: number
+    identityDocUrl: number
+    identityType: number
     avatarUrl: number
     createdAt: number
     updatedAt: number
@@ -1565,9 +1588,16 @@ export namespace Prisma {
     id?: true
     fullName?: true
     username?: true
+    email?: true
+    password?: true
+    phone?: true
     role?: true
     trustScore?: true
     isVerified?: true
+    verificationStatus?: true
+    legalCredentialUrl?: true
+    identityDocUrl?: true
+    identityType?: true
     avatarUrl?: true
     createdAt?: true
     updatedAt?: true
@@ -1577,9 +1607,16 @@ export namespace Prisma {
     id?: true
     fullName?: true
     username?: true
+    email?: true
+    password?: true
+    phone?: true
     role?: true
     trustScore?: true
     isVerified?: true
+    verificationStatus?: true
+    legalCredentialUrl?: true
+    identityDocUrl?: true
+    identityType?: true
     avatarUrl?: true
     createdAt?: true
     updatedAt?: true
@@ -1589,9 +1626,16 @@ export namespace Prisma {
     id?: true
     fullName?: true
     username?: true
+    email?: true
+    password?: true
+    phone?: true
     role?: true
     trustScore?: true
     isVerified?: true
+    verificationStatus?: true
+    legalCredentialUrl?: true
+    identityDocUrl?: true
+    identityType?: true
     avatarUrl?: true
     createdAt?: true
     updatedAt?: true
@@ -1688,9 +1732,16 @@ export namespace Prisma {
     id: string
     fullName: string | null
     username: string | null
+    email: string | null
+    password: string | null
+    phone: string | null
     role: $Enums.UserRole
     trustScore: number
     isVerified: boolean
+    verificationStatus: string
+    legalCredentialUrl: string | null
+    identityDocUrl: string | null
+    identityType: string | null
     avatarUrl: string | null
     createdAt: Date
     updatedAt: Date
@@ -1719,9 +1770,16 @@ export namespace Prisma {
     id?: boolean
     fullName?: boolean
     username?: boolean
+    email?: boolean
+    password?: boolean
+    phone?: boolean
     role?: boolean
     trustScore?: boolean
     isVerified?: boolean
+    verificationStatus?: boolean
+    legalCredentialUrl?: boolean
+    identityDocUrl?: boolean
+    identityType?: boolean
     avatarUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -1738,9 +1796,16 @@ export namespace Prisma {
     id?: boolean
     fullName?: boolean
     username?: boolean
+    email?: boolean
+    password?: boolean
+    phone?: boolean
     role?: boolean
     trustScore?: boolean
     isVerified?: boolean
+    verificationStatus?: boolean
+    legalCredentialUrl?: boolean
+    identityDocUrl?: boolean
+    identityType?: boolean
     avatarUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -1750,9 +1815,16 @@ export namespace Prisma {
     id?: boolean
     fullName?: boolean
     username?: boolean
+    email?: boolean
+    password?: boolean
+    phone?: boolean
     role?: boolean
     trustScore?: boolean
     isVerified?: boolean
+    verificationStatus?: boolean
+    legalCredentialUrl?: boolean
+    identityDocUrl?: boolean
+    identityType?: boolean
     avatarUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -1762,15 +1834,22 @@ export namespace Prisma {
     id?: boolean
     fullName?: boolean
     username?: boolean
+    email?: boolean
+    password?: boolean
+    phone?: boolean
     role?: boolean
     trustScore?: boolean
     isVerified?: boolean
+    verificationStatus?: boolean
+    legalCredentialUrl?: boolean
+    identityDocUrl?: boolean
+    identityType?: boolean
     avatarUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullName" | "username" | "role" | "trustScore" | "isVerified" | "avatarUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["profile"]>
+  export type ProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullName" | "username" | "email" | "password" | "phone" | "role" | "trustScore" | "isVerified" | "verificationStatus" | "legalCredentialUrl" | "identityDocUrl" | "identityType" | "avatarUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["profile"]>
   export type ProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     listings?: boolean | Profile$listingsArgs<ExtArgs>
     transactions?: boolean | Profile$transactionsArgs<ExtArgs>
@@ -1797,9 +1876,16 @@ export namespace Prisma {
       id: string
       fullName: string | null
       username: string | null
+      email: string | null
+      password: string | null
+      phone: string | null
       role: $Enums.UserRole
       trustScore: number
       isVerified: boolean
+      verificationStatus: string
+      legalCredentialUrl: string | null
+      identityDocUrl: string | null
+      identityType: string | null
       avatarUrl: string | null
       createdAt: Date
       updatedAt: Date
@@ -2235,9 +2321,16 @@ export namespace Prisma {
     readonly id: FieldRef<"Profile", 'String'>
     readonly fullName: FieldRef<"Profile", 'String'>
     readonly username: FieldRef<"Profile", 'String'>
+    readonly email: FieldRef<"Profile", 'String'>
+    readonly password: FieldRef<"Profile", 'String'>
+    readonly phone: FieldRef<"Profile", 'String'>
     readonly role: FieldRef<"Profile", 'UserRole'>
     readonly trustScore: FieldRef<"Profile", 'Float'>
     readonly isVerified: FieldRef<"Profile", 'Boolean'>
+    readonly verificationStatus: FieldRef<"Profile", 'String'>
+    readonly legalCredentialUrl: FieldRef<"Profile", 'String'>
+    readonly identityDocUrl: FieldRef<"Profile", 'String'>
+    readonly identityType: FieldRef<"Profile", 'String'>
     readonly avatarUrl: FieldRef<"Profile", 'String'>
     readonly createdAt: FieldRef<"Profile", 'DateTime'>
     readonly updatedAt: FieldRef<"Profile", 'DateTime'>
@@ -8695,9 +8788,16 @@ export namespace Prisma {
     id: 'id',
     fullName: 'fullName',
     username: 'username',
+    email: 'email',
+    password: 'password',
+    phone: 'phone',
     role: 'role',
     trustScore: 'trustScore',
     isVerified: 'isVerified',
+    verificationStatus: 'verificationStatus',
+    legalCredentialUrl: 'legalCredentialUrl',
+    identityDocUrl: 'identityDocUrl',
+    identityType: 'identityType',
     avatarUrl: 'avatarUrl',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -8974,9 +9074,16 @@ export namespace Prisma {
     id?: StringFilter<"Profile"> | string
     fullName?: StringNullableFilter<"Profile"> | string | null
     username?: StringNullableFilter<"Profile"> | string | null
+    email?: StringNullableFilter<"Profile"> | string | null
+    password?: StringNullableFilter<"Profile"> | string | null
+    phone?: StringNullableFilter<"Profile"> | string | null
     role?: EnumUserRoleFilter<"Profile"> | $Enums.UserRole
     trustScore?: FloatFilter<"Profile"> | number
     isVerified?: BoolFilter<"Profile"> | boolean
+    verificationStatus?: StringFilter<"Profile"> | string
+    legalCredentialUrl?: StringNullableFilter<"Profile"> | string | null
+    identityDocUrl?: StringNullableFilter<"Profile"> | string | null
+    identityType?: StringNullableFilter<"Profile"> | string | null
     avatarUrl?: StringNullableFilter<"Profile"> | string | null
     createdAt?: DateTimeFilter<"Profile"> | Date | string
     updatedAt?: DateTimeFilter<"Profile"> | Date | string
@@ -8992,9 +9099,16 @@ export namespace Prisma {
     id?: SortOrder
     fullName?: SortOrderInput | SortOrder
     username?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    password?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
     role?: SortOrder
     trustScore?: SortOrder
     isVerified?: SortOrder
+    verificationStatus?: SortOrder
+    legalCredentialUrl?: SortOrderInput | SortOrder
+    identityDocUrl?: SortOrderInput | SortOrder
+    identityType?: SortOrderInput | SortOrder
     avatarUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -9009,13 +9123,20 @@ export namespace Prisma {
   export type ProfileWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     username?: string
+    email?: string
     AND?: ProfileWhereInput | ProfileWhereInput[]
     OR?: ProfileWhereInput[]
     NOT?: ProfileWhereInput | ProfileWhereInput[]
     fullName?: StringNullableFilter<"Profile"> | string | null
+    password?: StringNullableFilter<"Profile"> | string | null
+    phone?: StringNullableFilter<"Profile"> | string | null
     role?: EnumUserRoleFilter<"Profile"> | $Enums.UserRole
     trustScore?: FloatFilter<"Profile"> | number
     isVerified?: BoolFilter<"Profile"> | boolean
+    verificationStatus?: StringFilter<"Profile"> | string
+    legalCredentialUrl?: StringNullableFilter<"Profile"> | string | null
+    identityDocUrl?: StringNullableFilter<"Profile"> | string | null
+    identityType?: StringNullableFilter<"Profile"> | string | null
     avatarUrl?: StringNullableFilter<"Profile"> | string | null
     createdAt?: DateTimeFilter<"Profile"> | Date | string
     updatedAt?: DateTimeFilter<"Profile"> | Date | string
@@ -9025,15 +9146,22 @@ export namespace Prisma {
     receivedMessages?: MessageListRelationFilter
     requestedCalls?: VideoCallListRelationFilter
     ownedCalls?: VideoCallListRelationFilter
-  }, "id" | "username">
+  }, "id" | "username" | "email">
 
   export type ProfileOrderByWithAggregationInput = {
     id?: SortOrder
     fullName?: SortOrderInput | SortOrder
     username?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    password?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
     role?: SortOrder
     trustScore?: SortOrder
     isVerified?: SortOrder
+    verificationStatus?: SortOrder
+    legalCredentialUrl?: SortOrderInput | SortOrder
+    identityDocUrl?: SortOrderInput | SortOrder
+    identityType?: SortOrderInput | SortOrder
     avatarUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -9051,9 +9179,16 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Profile"> | string
     fullName?: StringNullableWithAggregatesFilter<"Profile"> | string | null
     username?: StringNullableWithAggregatesFilter<"Profile"> | string | null
+    email?: StringNullableWithAggregatesFilter<"Profile"> | string | null
+    password?: StringNullableWithAggregatesFilter<"Profile"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"Profile"> | string | null
     role?: EnumUserRoleWithAggregatesFilter<"Profile"> | $Enums.UserRole
     trustScore?: FloatWithAggregatesFilter<"Profile"> | number
     isVerified?: BoolWithAggregatesFilter<"Profile"> | boolean
+    verificationStatus?: StringWithAggregatesFilter<"Profile"> | string
+    legalCredentialUrl?: StringNullableWithAggregatesFilter<"Profile"> | string | null
+    identityDocUrl?: StringNullableWithAggregatesFilter<"Profile"> | string | null
+    identityType?: StringNullableWithAggregatesFilter<"Profile"> | string | null
     avatarUrl?: StringNullableWithAggregatesFilter<"Profile"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Profile"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Profile"> | Date | string
@@ -9488,9 +9623,16 @@ export namespace Prisma {
     id?: string
     fullName?: string | null
     username?: string | null
+    email?: string | null
+    password?: string | null
+    phone?: string | null
     role?: $Enums.UserRole
     trustScore?: number
     isVerified?: boolean
+    verificationStatus?: string
+    legalCredentialUrl?: string | null
+    identityDocUrl?: string | null
+    identityType?: string | null
     avatarUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -9506,9 +9648,16 @@ export namespace Prisma {
     id?: string
     fullName?: string | null
     username?: string | null
+    email?: string | null
+    password?: string | null
+    phone?: string | null
     role?: $Enums.UserRole
     trustScore?: number
     isVerified?: boolean
+    verificationStatus?: string
+    legalCredentialUrl?: string | null
+    identityDocUrl?: string | null
+    identityType?: string | null
     avatarUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -9524,9 +9673,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fullName?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     trustScore?: FloatFieldUpdateOperationsInput | number
     isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    legalCredentialUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityDocUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityType?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9542,9 +9698,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fullName?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     trustScore?: FloatFieldUpdateOperationsInput | number
     isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    legalCredentialUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityDocUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityType?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9560,9 +9723,16 @@ export namespace Prisma {
     id?: string
     fullName?: string | null
     username?: string | null
+    email?: string | null
+    password?: string | null
+    phone?: string | null
     role?: $Enums.UserRole
     trustScore?: number
     isVerified?: boolean
+    verificationStatus?: string
+    legalCredentialUrl?: string | null
+    identityDocUrl?: string | null
+    identityType?: string | null
     avatarUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -9572,9 +9742,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fullName?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     trustScore?: FloatFieldUpdateOperationsInput | number
     isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    legalCredentialUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityDocUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityType?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9584,9 +9761,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fullName?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     trustScore?: FloatFieldUpdateOperationsInput | number
     isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    legalCredentialUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityDocUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityType?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10163,9 +10347,16 @@ export namespace Prisma {
     id?: SortOrder
     fullName?: SortOrder
     username?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
+    phone?: SortOrder
     role?: SortOrder
     trustScore?: SortOrder
     isVerified?: SortOrder
+    verificationStatus?: SortOrder
+    legalCredentialUrl?: SortOrder
+    identityDocUrl?: SortOrder
+    identityType?: SortOrder
     avatarUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10179,9 +10370,16 @@ export namespace Prisma {
     id?: SortOrder
     fullName?: SortOrder
     username?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
+    phone?: SortOrder
     role?: SortOrder
     trustScore?: SortOrder
     isVerified?: SortOrder
+    verificationStatus?: SortOrder
+    legalCredentialUrl?: SortOrder
+    identityDocUrl?: SortOrder
+    identityType?: SortOrder
     avatarUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10191,9 +10389,16 @@ export namespace Prisma {
     id?: SortOrder
     fullName?: SortOrder
     username?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
+    phone?: SortOrder
     role?: SortOrder
     trustScore?: SortOrder
     isVerified?: SortOrder
+    verificationStatus?: SortOrder
+    legalCredentialUrl?: SortOrder
+    identityDocUrl?: SortOrder
+    identityType?: SortOrder
     avatarUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -11943,9 +12148,16 @@ export namespace Prisma {
     id?: string
     fullName?: string | null
     username?: string | null
+    email?: string | null
+    password?: string | null
+    phone?: string | null
     role?: $Enums.UserRole
     trustScore?: number
     isVerified?: boolean
+    verificationStatus?: string
+    legalCredentialUrl?: string | null
+    identityDocUrl?: string | null
+    identityType?: string | null
     avatarUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -11960,9 +12172,16 @@ export namespace Prisma {
     id?: string
     fullName?: string | null
     username?: string | null
+    email?: string | null
+    password?: string | null
+    phone?: string | null
     role?: $Enums.UserRole
     trustScore?: number
     isVerified?: boolean
+    verificationStatus?: string
+    legalCredentialUrl?: string | null
+    identityDocUrl?: string | null
+    identityType?: string | null
     avatarUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12083,9 +12302,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fullName?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     trustScore?: FloatFieldUpdateOperationsInput | number
     isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    legalCredentialUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityDocUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityType?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12100,9 +12326,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fullName?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     trustScore?: FloatFieldUpdateOperationsInput | number
     isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    legalCredentialUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityDocUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityType?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12222,9 +12455,16 @@ export namespace Prisma {
     id?: string
     fullName?: string | null
     username?: string | null
+    email?: string | null
+    password?: string | null
+    phone?: string | null
     role?: $Enums.UserRole
     trustScore?: number
     isVerified?: boolean
+    verificationStatus?: string
+    legalCredentialUrl?: string | null
+    identityDocUrl?: string | null
+    identityType?: string | null
     avatarUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12239,9 +12479,16 @@ export namespace Prisma {
     id?: string
     fullName?: string | null
     username?: string | null
+    email?: string | null
+    password?: string | null
+    phone?: string | null
     role?: $Enums.UserRole
     trustScore?: number
     isVerified?: boolean
+    verificationStatus?: string
+    legalCredentialUrl?: string | null
+    identityDocUrl?: string | null
+    identityType?: string | null
     avatarUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12335,9 +12582,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fullName?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     trustScore?: FloatFieldUpdateOperationsInput | number
     isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    legalCredentialUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityDocUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityType?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12352,9 +12606,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fullName?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     trustScore?: FloatFieldUpdateOperationsInput | number
     isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    legalCredentialUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityDocUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityType?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12426,9 +12687,16 @@ export namespace Prisma {
     id?: string
     fullName?: string | null
     username?: string | null
+    email?: string | null
+    password?: string | null
+    phone?: string | null
     role?: $Enums.UserRole
     trustScore?: number
     isVerified?: boolean
+    verificationStatus?: string
+    legalCredentialUrl?: string | null
+    identityDocUrl?: string | null
+    identityType?: string | null
     avatarUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12443,9 +12711,16 @@ export namespace Prisma {
     id?: string
     fullName?: string | null
     username?: string | null
+    email?: string | null
+    password?: string | null
+    phone?: string | null
     role?: $Enums.UserRole
     trustScore?: number
     isVerified?: boolean
+    verificationStatus?: string
+    legalCredentialUrl?: string | null
+    identityDocUrl?: string | null
+    identityType?: string | null
     avatarUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12465,9 +12740,16 @@ export namespace Prisma {
     id?: string
     fullName?: string | null
     username?: string | null
+    email?: string | null
+    password?: string | null
+    phone?: string | null
     role?: $Enums.UserRole
     trustScore?: number
     isVerified?: boolean
+    verificationStatus?: string
+    legalCredentialUrl?: string | null
+    identityDocUrl?: string | null
+    identityType?: string | null
     avatarUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12482,9 +12764,16 @@ export namespace Prisma {
     id?: string
     fullName?: string | null
     username?: string | null
+    email?: string | null
+    password?: string | null
+    phone?: string | null
     role?: $Enums.UserRole
     trustScore?: number
     isVerified?: boolean
+    verificationStatus?: string
+    legalCredentialUrl?: string | null
+    identityDocUrl?: string | null
+    identityType?: string | null
     avatarUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12578,9 +12867,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fullName?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     trustScore?: FloatFieldUpdateOperationsInput | number
     isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    legalCredentialUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityDocUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityType?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12595,9 +12891,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fullName?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     trustScore?: FloatFieldUpdateOperationsInput | number
     isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    legalCredentialUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityDocUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityType?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12623,9 +12926,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fullName?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     trustScore?: FloatFieldUpdateOperationsInput | number
     isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    legalCredentialUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityDocUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityType?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12640,9 +12950,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fullName?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     trustScore?: FloatFieldUpdateOperationsInput | number
     isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    legalCredentialUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityDocUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityType?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12714,9 +13031,16 @@ export namespace Prisma {
     id?: string
     fullName?: string | null
     username?: string | null
+    email?: string | null
+    password?: string | null
+    phone?: string | null
     role?: $Enums.UserRole
     trustScore?: number
     isVerified?: boolean
+    verificationStatus?: string
+    legalCredentialUrl?: string | null
+    identityDocUrl?: string | null
+    identityType?: string | null
     avatarUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12731,9 +13055,16 @@ export namespace Prisma {
     id?: string
     fullName?: string | null
     username?: string | null
+    email?: string | null
+    password?: string | null
+    phone?: string | null
     role?: $Enums.UserRole
     trustScore?: number
     isVerified?: boolean
+    verificationStatus?: string
+    legalCredentialUrl?: string | null
+    identityDocUrl?: string | null
+    identityType?: string | null
     avatarUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12753,9 +13084,16 @@ export namespace Prisma {
     id?: string
     fullName?: string | null
     username?: string | null
+    email?: string | null
+    password?: string | null
+    phone?: string | null
     role?: $Enums.UserRole
     trustScore?: number
     isVerified?: boolean
+    verificationStatus?: string
+    legalCredentialUrl?: string | null
+    identityDocUrl?: string | null
+    identityType?: string | null
     avatarUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12770,9 +13108,16 @@ export namespace Prisma {
     id?: string
     fullName?: string | null
     username?: string | null
+    email?: string | null
+    password?: string | null
+    phone?: string | null
     role?: $Enums.UserRole
     trustScore?: number
     isVerified?: boolean
+    verificationStatus?: string
+    legalCredentialUrl?: string | null
+    identityDocUrl?: string | null
+    identityType?: string | null
     avatarUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12866,9 +13211,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fullName?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     trustScore?: FloatFieldUpdateOperationsInput | number
     isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    legalCredentialUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityDocUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityType?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12883,9 +13235,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fullName?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     trustScore?: FloatFieldUpdateOperationsInput | number
     isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    legalCredentialUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityDocUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityType?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12911,9 +13270,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fullName?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     trustScore?: FloatFieldUpdateOperationsInput | number
     isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    legalCredentialUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityDocUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityType?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12928,9 +13294,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fullName?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     trustScore?: FloatFieldUpdateOperationsInput | number
     isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    legalCredentialUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityDocUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    identityType?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

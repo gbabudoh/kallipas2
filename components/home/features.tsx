@@ -61,9 +61,9 @@ export default function Features() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="glass-card p-8 rounded-3xl hover:border-[#9AB17A]/50 hover:shadow-[0_15px_40px_-10px_rgba(154,177,122,0.2)] transition-all duration-300 group"
+              className="glass-card p-8 rounded-3xl hover:border-[#0eab9b]/50 hover:shadow-[0_15px_40px_-10px_rgba(14,171,155,0.2)] transition-all duration-300 group"
             >
-              <div className="w-14 h-14 rounded-2xl bg-[#9AB17A]/10 flex items-center justify-center mb-6 group-hover:bg-[#9AB17A] group-hover:text-white transition-all duration-300 text-[#9AB17A] shadow-inner">
+              <div className="w-14 h-14 rounded-2xl bg-[#0eab9b]/10 flex items-center justify-center mb-6 group-hover:bg-[#0eab9b] group-hover:text-white transition-all duration-300 text-[#0eab9b] shadow-inner">
                 <feature.icon className="w-7 h-7" />
               </div>
               <h3 className="text-2xl font-bold mb-4 text-slate-800">{feature.title}</h3>

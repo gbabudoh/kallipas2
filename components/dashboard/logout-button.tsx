@@ -1,14 +1,16 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { LogOut } from 'lucide-react'
 
 export default function LogoutButton() {
-  const router = useRouter()
 
   const handleLogout = () => {
-    // TODO: Replace with real auth signout (NextAuth or custom)
-    router.push('/login')
+    // Clear mock auth state
+    localStorage.removeItem('kallipas_role')
+    document.cookie = 'kallipas_role=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+    
+    // Force a full refresh to clear current SPA state and trigger middleware redirect
+    window.location.href = '/login'
   }
 
   return (

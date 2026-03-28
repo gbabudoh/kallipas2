@@ -24,7 +24,7 @@ export async function createListing(formData: {
       create: {
         id: formData.ownerId,
         fullName: 'Test User',
-        role: 'private'
+        role: 'PRIVATE_SELLER'
       }
     })
 

@@ -1,139 +1,57 @@
-import prisma from '@/lib/prisma'
 import Link from 'next/link'
-import { 
-  PlusSquare, 
-  TrendingUp, 
-  Users, 
-  Eye, 
-  Globe
-} from 'lucide-react'
+import { User, Briefcase, Users, Key, Home, Building, Scale, Map, ArrowRight } from 'lucide-react'
 
-export default async function DashboardPage() {
-  const profile = await prisma.profile.findUnique({
-    where: { id: 'dev-user-001' }
-  })
+const DEMO_ACCOUNTS = [
+  { slug: 'private-seller', title: 'Private Seller', description: 'Individual selling their own property', icon: User, color: 'bg-emerald-500' },
+  { slug: 'independent-realtor', title: 'Independent Realtor', description: 'Freelance professional agent', icon: Briefcase, color: 'bg-blue-500' },
+  { slug: 'agency-agent', title: 'Agency Agent', description: 'Agent working for a firm', icon: Users, color: 'bg-indigo-500' },
+  { slug: 'private-landlord', title: 'Private Landlord', description: 'Individual renting out property', icon: Key, color: 'bg-amber-500' },
+  { slug: 'property-manager', title: 'Property Manager', description: 'Professional management services', icon: Home, color: 'bg-orange-500' },
+  { slug: 'letting-agent', title: 'Letting Agent', description: 'Broker for rental properties', icon: Building, color: 'bg-purple-500' },
+  { slug: 'legal-agent', title: 'Legal Agent', description: 'Real estate lawyer or notary', icon: Scale, color: 'bg-rose-500' },
+  { slug: 'surveyor', title: 'Surveyor', description: 'Property inspection and valuation', icon: Map, color: 'bg-teal-500' },
+]
 
-  const role = profile?.role || 'private'
-
-  const getRoleStats = () => {
-    const baseStats = [
-      { label: 'Total Views', value: '1,284', icon: Eye, trend: '+12%' },
-      { label: 'Call Requests', value: '0', icon: Users, trend: '0%' },
-    ]
-
-    switch (role) {
-      case 'realtor':
-      case 'agent':
-        return [
-          { label: 'Managed Listings', value: '12', icon: PlusSquare, trend: '+2' },
-          ...baseStats,
-          { label: 'Agency Rank', value: '#4', icon: TrendingUp, trend: 'Top 5%' },
-        ]
-      default:
-        return [
-          { label: 'Active Listings', value: '1', icon: PlusSquare, trend: 'New' },
-          ...baseStats,
-          { label: 'Trust Score', value: String(profile?.trustScore ?? '10'), icon: TrendingUp, trend: 'Global Avg' },
-        ]
-    }
-  }
-
-  const stats = getRoleStats()
-
+export default function DashboardSelector() {
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">
-            Welcome back, {profile?.fullName || 'User'}! 
-            <span className="ml-3 text-[10px] font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-500 uppercase tracking-widest border border-blue-500/20">
-              {role}
-            </span>
-          </h1>
-          <p className="text-gray-400">Here&apos;s your specialized global overview for today.</p>
-        </div>
-        <Link 
-          href="/dashboard/listings/new"
-          className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20"
-        >
-          <PlusSquare className="w-5 h-5" />
-          Create New Listing
-        </Link>
-      </div>
-
-      {/* Verification Banner */}
-      {!profile?.isVerified && (
-        <div className="glass-card p-6 border-blue-500/20 bg-blue-500/5 flex items-center justify-between rounded-3xl">
+    <div className="min-h-screen bg-[#050505] text-white p-8 md:p-12">
+      <div className="max-w-6xl mx-auto space-y-12">
+        <header className="space-y-4">
+          <Link href="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-4">
+            ← Back to Homepage
+          </Link>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400">
-              <Globe className="w-6 h-6 animate-pulse" />
+            <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center font-bold text-2xl shadow-lg shadow-blue-500/20">
+              K
             </div>
-            <div>
-              <h4 className="font-bold">Boost Your Global Visibility</h4>
-              <p className="text-sm text-gray-400">Verified private sellers get 4x more views and higher trust from international buyers.</p>
-            </div>
+            <h1 className="text-4xl font-bold tracking-tight">Select Demo Dashboard</h1>
           </div>
-          <button className="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg text-sm hover:bg-blue-500 transition-all">
-            Get Verified
-          </button>
-        </div>
-      )}
+          <p className="text-xl text-gray-400 max-w-2xl">
+            Choose a role to experience their independent dashboard view. Each role has specialized tools, metrics, and workflows tailored for their position in the global property network.
+          </p>
+        </header>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
-          <div key={stat.label} className="glass-card p-6 rounded-3xl group hover:border-blue-500/50 transition-all">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                <stat.icon className="w-5 h-5" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {DEMO_ACCOUNTS.map((account) => (
+            <Link 
+              key={account.slug}
+              href={`/${account.slug}/dashboard`}
+              className="group relative bg-gray-900/50 backdrop-blur-xl border border-gray-800 p-6 rounded-3xl hover:border-gray-700 transition-all duration-300 hover:shadow-2xl overflow-hidden flex flex-col"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              
+              <div className={`w-12 h-12 rounded-2xl ${account.color}/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+                <account.icon className={`w-6 h-6 text-${account.color.replace('bg-', '')}`} />
               </div>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                stat.trend.startsWith('+') ? 'bg-green-500/10 text-green-500' : 'bg-blue-500/10 text-blue-500'
-              }`}>
-                {stat.trend}
-              </span>
-            </div>
-            <p className="text-sm text-gray-500 mb-1 font-bold italic">{stat.label}</p>
-            <h3 className="text-2xl font-bold tracking-tight">{stat.value}</h3>
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 glass-card rounded-3xl p-6">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-xl font-bold italic">Recent Activity</h3>
-            <button className="text-sm text-blue-500 font-bold hover:underline">View All</button>
-          </div>
-          <div className="space-y-6">
-             <p className="text-gray-500 text-center py-12 italic">No recent activity found. Start by listing your first property.</p>
-          </div>
-        </div>
-
-        <div className="glass-card rounded-3xl p-6">
-          <h3 className="text-xl font-bold italic mb-8">Trust Profile</h3>
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400 text-sm italic">Status</span>
-              <span className={profile?.isVerified ? 'text-green-500 font-bold uppercase text-[10px] tracking-widest' : 'text-yellow-500 text-[10px] font-bold uppercase tracking-widest'}>
-                {profile?.isVerified ? 'Verified' : 'Verification Required'}
-              </span>
-            </div>
-            <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
-                <div 
-                    className="h-full bg-blue-600 transition-all duration-1000" 
-                    style={{ width: `${profile?.trustScore ?? 10}%` }}
-                ></div>
-            </div>
-            <p className="text-xs text-gray-500 leading-relaxed italic">
-                {role === 'realtor' ? 'Maintain high trust scores to keep your Agency badge.' : 'Complete your verification to reach more buyers globally.'}
-            </p>
-            {!profile?.isVerified && (
-                <button className="w-full py-3 rounded-xl border border-blue-500/30 hover:bg-blue-600/10 hover:border-blue-500 transition-all text-sm font-bold text-blue-400">
-                    Start Verification
-                </button>
-            )}
-          </div>
+              
+              <h3 className="text-xl font-bold mb-2 group-hover:text-blue-400 transition-colors">{account.title}</h3>
+              <p className="text-sm text-gray-500 flex-1">{account.description}</p>
+              
+              <div className="mt-6 flex items-center gap-2 text-sm font-bold text-gray-400 group-hover:text-white transition-colors">
+                Enter Dashboard <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </div>

@@ -124,9 +124,16 @@ exports.Prisma.ProfileScalarFieldEnum = {
   id: 'id',
   fullName: 'fullName',
   username: 'username',
+  email: 'email',
+  password: 'password',
+  phone: 'phone',
   role: 'role',
   trustScore: 'trustScore',
   isVerified: 'isVerified',
+  verificationStatus: 'verificationStatus',
+  legalCredentialUrl: 'legalCredentialUrl',
+  identityDocUrl: 'identityDocUrl',
+  identityType: 'identityType',
   avatarUrl: 'avatarUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -227,7 +234,9 @@ exports.UserRole = exports.$Enums.UserRole = {
   AGENCY_AGENT: 'AGENCY_AGENT',
   PRIVATE_LANDLORD: 'PRIVATE_LANDLORD',
   PROPERTY_MANAGER: 'PROPERTY_MANAGER',
-  LETTING_AGENT: 'LETTING_AGENT'
+  LETTING_AGENT: 'LETTING_AGENT',
+  LEGAL_AGENT: 'LEGAL_AGENT',
+  SURVEYOR: 'SURVEYOR'
 };
 
 exports.PropertyType = exports.$Enums.PropertyType = {

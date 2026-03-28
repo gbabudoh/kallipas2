@@ -7,11 +7,12 @@ import {
   MapPin, 
   DollarSign, 
   Image as ImageIcon, 
-  CheckCircle2, 
+  CircleCheckBig as CheckCircle2, 
   ArrowRight, 
   ArrowLeft,
   Loader2,
-  Plus
+  Plus,
+  ChevronDown
 } from 'lucide-react'
 import { createListing } from '@/app/actions/listings'
 import { CURRENCIES, getCurrency, formatPrice } from '@/lib/currencies'
@@ -113,85 +114,97 @@ export default function NewListingForm() {
     switch (currentStep) {
       case 0:
         return (
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-400 uppercase tracking-widest">Listing Title</label>
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-10">
+            <div className="space-y-4">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Listing Asset Identity</label>
               <input 
                 type="text" 
                 value={formData.title}
                 onChange={e => setFormData({...formData, title: e.target.value})}
-                placeholder="e.g. Luxury Beachfront Villa"
-                className="w-full bg-gray-900/50 border border-gray-800 rounded-2xl py-4 px-6 text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
+                placeholder="e.g. Elite Skyline Tower Villa"
+                className="w-full bg-white border border-slate-200 rounded-[1.5rem] py-5 px-8 text-slate-900 font-bold focus:border-[#0eaa99]/40 focus:ring-8 focus:ring-[#0eaa99]/5 outline-none transition-all placeholder-slate-200 shadow-sm"
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-400 uppercase tracking-widest">Description</label>
+            <div className="space-y-4">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Strategic Description</label>
               <textarea 
                 value={formData.description}
                 onChange={e => setFormData({...formData, description: e.target.value})}
-                placeholder="Describe your property..."
-                rows={4}
-                className="w-full bg-gray-900/50 border border-gray-800 rounded-2xl py-4 px-6 text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all resize-none"
+                placeholder="Declare the specific perimeters and unique leverage points of the asset..."
+                rows={5}
+                className="w-full bg-white border border-slate-200 rounded-[2rem] py-6 px-8 text-slate-900 font-bold focus:border-[#0eaa99]/40 focus:ring-8 focus:ring-[#0eaa99]/5 outline-none transition-all resize-none shadow-sm leading-relaxed"
               />
             </div>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-400 uppercase tracking-widest">Property Type</label>
-                <select 
-                  value={formData.property_type}
-                  onChange={e => setFormData({...formData, property_type: e.target.value as 'residential' | 'commercial' | 'land' | 'industrial'})}
-                  className="w-full bg-gray-900/50 border border-gray-800 rounded-2xl py-4 px-6 text-white outline-none appearance-none"
-                >
-                  <option value="residential">Residential</option>
-                  <option value="commercial">Commercial</option>
-                  <option value="land">Land</option>
-                  <option value="industrial">Industrial</option>
-                </select>
+            <div className="grid grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Asset Classification</label>
+                <div className="relative">
+                  <select 
+                    value={formData.property_type}
+                    onChange={e => setFormData({...formData, property_type: e.target.value as 'residential' | 'commercial' | 'land' | 'industrial'})}
+                    className="w-full bg-white border border-slate-200 rounded-2xl py-5 px-8 text-slate-900 font-black outline-none appearance-none cursor-pointer focus:border-[#0eaa99]/40 transition-all shadow-sm"
+                  >
+                    <option value="residential">Residential Core</option>
+                    <option value="commercial">Commercial Hub</option>
+                    <option value="land">Raw Strategic Land</option>
+                    <option value="industrial">Industrial Perimeter</option>
+                  </select>
+                  <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300">
+                    <ChevronDown className="w-4 h-4" />
+                  </div>
+                </div>
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-400 uppercase tracking-widest">Listing Type</label>
-                <select 
-                   value={formData.listing_type}
-                   onChange={e => setFormData({...formData, listing_type: e.target.value})}
-                   className="w-full bg-gray-900/50 border border-gray-800 rounded-2xl py-4 px-6 text-white outline-none appearance-none"
-                >
-                  <option value="sale">For Sale</option>
-                  <option value="rent">For Rent</option>
-                </select>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Transaction Protocol</label>
+                <div className="relative">
+                  <select 
+                     value={formData.listing_type}
+                     onChange={e => setFormData({...formData, listing_type: e.target.value})}
+                     className="w-full bg-white border border-slate-200 rounded-2xl py-5 px-8 text-slate-900 font-black outline-none appearance-none cursor-pointer focus:border-[#0eaa99]/40 transition-all shadow-sm"
+                  >
+                    <option value="sale">Direct Disposal (Sale)</option>
+                    <option value="rent">Recurring Lease (Rent)</option>
+                  </select>
+                  <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300">
+                    <ChevronDown className="w-4 h-4" />
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>
         )
       case 1:
         return (
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-             <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-400 uppercase tracking-widest">Address</label>
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
+             <div className="space-y-4">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Global Meridian Address</label>
               <input 
                 type="text" 
                 value={formData.address}
                 onChange={e => setFormData({...formData, address: e.target.value})}
-                placeholder="Street address"
-                className="w-full bg-gray-900/50 border border-gray-800 rounded-2xl py-4 px-6 text-white outline-none"
+                placeholder="Primary street address in the region"
+                className="w-full bg-white border border-slate-200 rounded-[1.5rem] py-5 px-8 text-slate-900 font-bold focus:border-[#0eaa99]/40 focus:ring-8 focus:ring-[#0eaa99]/5 outline-none transition-all placeholder-slate-200 shadow-sm"
               />
             </div>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-400 uppercase tracking-widest">City</label>
+            <div className="grid grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Metropolitan Center</label>
                 <input 
                    type="text" 
                    value={formData.city}
                    onChange={e => setFormData({...formData, city: e.target.value})}
-                   className="w-full bg-gray-900/50 border border-gray-800 rounded-2xl py-4 px-6 text-white outline-none"
+                   placeholder="City / Settlement"
+                   className="w-full bg-white border border-slate-200 rounded-2xl py-5 px-8 text-slate-900 font-bold focus:border-[#0eaa99]/40 focus:ring-8 focus:ring-[#0eaa99]/5 outline-none transition-all shadow-sm"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-400 uppercase tracking-widest">Country</label>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Nation State Perimeters</label>
                 <input 
                    type="text" 
                    value={formData.country}
                    onChange={e => setFormData({...formData, country: e.target.value})}
-                   className="w-full bg-gray-900/50 border border-gray-800 rounded-2xl py-4 px-6 text-white outline-none"
+                   placeholder="Country / Sovereignty"
+                   className="w-full bg-white border border-slate-200 rounded-2xl py-5 px-8 text-slate-900 font-bold focus:border-[#0eaa99]/40 focus:ring-8 focus:ring-[#0eaa99]/5 outline-none transition-all shadow-sm"
                 />
               </div>
             </div>
@@ -199,97 +212,126 @@ export default function NewListingForm() {
         )
       case 2:
         return (
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-10">
             {/* Currency selector */}
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-400 uppercase tracking-widest">Currency</label>
-              <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
+            <div className="space-y-4">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Monetary Foundation Protocol</label>
+              <div className="grid grid-cols-3 md:grid-cols-4 gap-4">
                 {CURRENCIES.map(c => (
                   <button
                     key={c.code}
                     type="button"
                     onClick={() => setFormData({...formData, currency: c.code})}
-                    className={`p-3 rounded-xl text-left transition-all border ${
+                    className={`p-5 rounded-2xl text-left transition-all border-2 group hover:scale-[1.02] active:scale-95 ${
                       formData.currency === c.code
-                        ? 'border-blue-500 bg-blue-500/10 shadow-[0_0_10px_rgba(59,130,246,0.2)]'
-                        : 'border-gray-800 bg-gray-900/50 hover:border-gray-700'
+                        ? 'border-[#0eaa99] bg-[#0eaa99]/5 shadow-xl shadow-[#0eaa99]/10'
+                        : 'border-slate-50 bg-white hover:border-slate-100 shadow-sm'
                     }`}
                   >
-                    <span className="text-lg">{c.flag}</span>
-                    <p className="text-xs font-bold mt-1">{c.code}</p>
-                    <p className="text-[10px] text-gray-500">{c.symbol}</p>
+                    <div className="flex items-center justify-between mb-2">
+                       <span className="text-2xl drop-shadow-md">{c.flag}</span>
+                       <div className={`w-2 h-2 rounded-full ${formData.currency === c.code ? 'bg-[#0eaa99] shadow-lg shadow-[#0eaa99]/50 animate-pulse' : 'bg-slate-100'}`} />
+                    </div>
+                    <p className={`text-xs font-black tracking-widest uppercase ${formData.currency === c.code ? 'text-[#0eaa99]' : 'text-slate-400'}`}>{c.code}</p>
+                    <p className="text-[9px] text-slate-400 font-bold mt-1 opacity-60 italic">{c.symbol === '$' ? 'Dollar System' : c.symbol === '€' ? 'Euro Perimeter' : 'Localized Capital'}</p>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Price input with dynamic symbol */}
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-400 uppercase tracking-widest">Price</label>
-              <div className="relative">
-                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 font-bold">
+            <div className="space-y-4">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Valuation Threshold</label>
+              <div className="relative group">
+                <div className="absolute left-8 top-1/2 -translate-y-1/2 text-[#0eaa99] font-black text-xl drop-shadow-sm">
                   {selectedCurrency.symbol}
                 </div>
                 <input 
                   type="number" 
                   value={formData.price}
                   onChange={e => setFormData({...formData, price: e.target.value})}
-                  placeholder="0"
-                  className="w-full bg-gray-900/50 border border-gray-800 rounded-2xl py-4 pl-14 pr-6 text-white outline-none text-xl font-bold"
+                  placeholder="0.00"
+                  className="w-full bg-white border border-slate-200 rounded-[2rem] py-8 pl-18 pr-12 text-slate-950 outline-none text-4xl font-black italic tracking-tighter focus:border-[#0eaa99]/40 focus:ring-8 focus:ring-[#0eaa99]/5 shadow-xl shadow-slate-200/20"
                 />
               </div>
               {formData.price && (
-                <p className="text-sm text-gray-400">
-                  Preview: {formatPrice(parseFloat(formData.price) || 0, formData.currency)}
-                </p>
+                <div className="ml-4 flex items-center gap-3">
+                   <div className="w-1.5 h-1.5 rounded-full bg-[#0eaa99] shadow-lg shadow-[#0eaa99]/50 animate-pulse" />
+                   <p className="text-sm text-slate-400 font-black uppercase tracking-widest italic">
+                     Digital Audit Sync: {formatPrice(parseFloat(formData.price) || 0, formData.currency)}
+                   </p>
+                </div>
               )}
             </div>
           </motion.div>
         )
       case 3:
         return (
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-            <div className="grid grid-cols-3 gap-4">
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-10">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
               {formData.images.map((url, i) => (
-                <div key={i} className="aspect-square bg-gray-900 rounded-2xl overflow-hidden border border-gray-800 relative">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                <div key={i} className="aspect-square bg-slate-50 rounded-[2rem] overflow-hidden border border-slate-100 relative shadow-xl hover:scale-105 transition-transform duration-500 group">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={url} alt="Property" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-slate-950/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
               ))}
-              <label className="aspect-square bg-gray-900 border-2 border-dashed border-gray-800 rounded-2xl flex items-center justify-center text-gray-500 hover:text-blue-500 hover:border-blue-500 cursor-pointer transition-all">
+              <label className="aspect-square bg-slate-50 border-4 border-dashed border-slate-100 rounded-[2rem] flex flex-col items-center justify-center text-slate-300 hover:text-[#0eaa99] hover:border-[#0eaa99]/40 hover:bg-[#0eaa99]/5 cursor-pointer transition-all duration-500 group">
                 <input type="file" className="hidden" onChange={handleImageUpload} disabled={loading} />
-                <Plus className="w-8 h-8" />
+                <div className="w-16 h-16 rounded-3xl bg-white shadow-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                   <Plus className="w-8 h-8" />
+                </div>
+                <span className="text-[10px] font-black tracking-[0.3em] uppercase opacity-60">Initialize Stream</span>
               </label>
             </div>
-            <p className="text-gray-400 text-center">Upload high-quality images of your property.</p>
+            <div className="text-center p-8 bg-slate-50 border border-slate-100 rounded-[2rem] border-dashed">
+               <ImageIcon className="w-8 h-8 text-[#0eaa99] mx-auto mb-4 opacity-30" />
+               <p className="text-slate-400 font-bold italic">Upload high-resolution architectural perimeters to maximize global leverage.</p>
+            </div>
           </motion.div>
         )
       case 4:
         return (
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-            <div className="glass-card p-6 rounded-3xl border-blue-500/20">
-              <h4 className="font-bold text-lg mb-2">{formData.title || 'Untitled Listing'}</h4>
-              <p className="text-gray-400 text-sm mb-4">{formData.city}{formData.country ? `, ${formData.country}` : ''}</p>
-              <p className="text-2xl font-bold text-blue-500">
-                {formatPrice(parseFloat(formData.price) || 0, formData.currency)}
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-10">
+            <div className="bg-slate-50 p-10 rounded-[2.5rem] border border-slate-100 shadow-inner relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#0eaa99]/5 rounded-bl-[4rem] group-hover:scale-125 transition-transform duration-700" />
+              <div className="flex items-center justify-between mb-8">
+                <h4 className="font-black text-3xl text-slate-950 tracking-tighter italic underline decoration-wavy decoration-[#0eaa99]/20 underline-offset-8">
+                  {formData.title || 'Untitled Asset Dossier'}
+                </h4>
+                <div className="px-5 py-2 bg-white border border-slate-200 rounded-full shadow-sm text-[#0eaa99] font-black text-[10px] uppercase tracking-widest">In Review State</div>
+              </div>
+              <p className="text-slate-400 font-bold italic mb-8 border-l-4 border-[#0eaa99]/20 pl-6 leading-relaxed">
+                {formData.address ? `${formData.address}, ${formData.city}` : 'Global coordinate perimeters pending final verification.'}
               </p>
-              <div className="flex gap-2 mt-3">
-                <span className="text-[10px] font-bold px-2 py-1 rounded bg-gray-800 text-gray-400 uppercase">
-                  {formData.property_type}
-                </span>
-                <span className="text-[10px] font-bold px-2 py-1 rounded bg-gray-800 text-gray-400 uppercase">
-                  {formData.listing_type}
-                </span>
-                <span className="text-[10px] font-bold px-2 py-1 rounded bg-gray-800 text-gray-400 uppercase">
-                  {formData.currency}
-                </span>
+              <div className="flex items-center justify-between">
+                <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-950 to-[#0eaa99] tracking-tighter italic">
+                  {formatPrice(parseFloat(formData.price) || 0, formData.currency)}
+                </p>
+                <div className="flex gap-4">
+                  <span className="text-[9px] font-black px-4 py-2 rounded-xl bg-white border border-slate-100 text-slate-400 shadow-sm uppercase tracking-widest">
+                    {formData.property_type}
+                  </span>
+                  <span className="text-[9px] font-black px-4 py-2 rounded-xl bg-white border border-slate-100 text-slate-400 shadow-sm uppercase tracking-widest">
+                    {formData.listing_type}
+                  </span>
+                </div>
               </div>
             </div>
-            <div className="p-4 bg-blue-500/5 rounded-2xl border border-blue-500/10">
-               <p className="text-xs text-blue-400 font-medium">Standard listing fee: $25.00 USD (One-time, regardless of property currency)</p>
-            </div>
-            <div className="p-4 bg-green-500/5 rounded-2xl border border-green-500/10">
-               <p className="text-xs text-green-400 font-medium">✨ After payment, your listing will be auto-translated to French, Spanish, and Arabic for global reach.</p>
+            
+            <div className="flex flex-col gap-4">
+              <div className="p-6 bg-[#0eaa99]/5 rounded-2xl border border-[#0eaa99]/10 flex items-center gap-4">
+                 <div className="w-10 h-10 rounded-xl bg-white shadow-md flex items-center justify-center text-[#0eaa99]">
+                   <DollarSign className="w-5 h-5" />
+                 </div>
+                 <p className="text-xs text-slate-500 font-bold uppercase tracking-widest leading-relaxed">System overhead provision: <span className="text-[#0eaa99] font-black">$25.00 USD</span> (Fixed Flat Asset Intake)</p>
+              </div>
+              <div className="p-6 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-4 group">
+                 <div className="w-10 h-10 rounded-xl bg-[#0eaa99]/20 flex items-center justify-center text-[#0eaa99] group-hover:rotate-12 transition-all">
+                   <CheckCircle2 className="w-5 h-5" />
+                 </div>
+                 <p className="text-xs text-slate-400 font-bold italic tracking-wide">Automated multi-sovereignty translation matrix with global reach indexing will manifest post-provision.</p>
+              </div>
             </div>
           </motion.div>
         )
@@ -297,18 +339,21 @@ export default function NewListingForm() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto py-12">
-      {/* Stepper */}
-      <div className="flex justify-between mb-12">
+    <div className="max-w-4xl mx-auto py-8">
+      {/* Stepper HUD */}
+      <div className="flex justify-between mb-16 px-10 relative">
+        <div className="absolute top-6 left-20 right-20 h-px bg-slate-100 -z-10" />
         {steps.map((s, i) => (
-          <div key={s.id} className="flex flex-col items-center gap-2 group">
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${
-              i <= currentStep ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'bg-gray-900 text-gray-600'
+          <div key={s.id} className="flex flex-col items-center gap-3 group relative">
+            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 border-2 ${
+              i <= currentStep 
+                ? 'bg-[#0eaa99] text-white border-[#0eaa99] shadow-2xl shadow-[#0eaa99]/40 scale-110' 
+                : 'bg-white text-slate-300 border-slate-100 shadow-sm'
             }`}>
-              <s.icon className="w-5 h-5" />
+              <s.icon className={`w-6 h-6 ${i <= currentStep ? 'animate-pulse' : ''}`} />
             </div>
-            <span className={`text-[10px] font-bold uppercase tracking-widest ${
-              i <= currentStep ? 'text-blue-500' : 'text-gray-600'
+            <span className={`text-[10px] font-black uppercase tracking-[0.3em] transition-colors ${
+              i <= currentStep ? 'text-slate-950' : 'text-slate-400 opacity-50'
             }`}>
               {s.title}
             </span>
@@ -316,43 +361,43 @@ export default function NewListingForm() {
         ))}
       </div>
 
-      <div className="glass-card p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 rounded-full blur-3xl -z-10" />
+      <div className="bg-white/60 backdrop-blur-3xl p-12 rounded-[3.5rem] border border-white shadow-[0_32px_96px_-24px_rgba(0,0,0,0.08)] relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[#0eaa99]/5 rounded-full blur-[100px] -z-10" />
         
         <AnimatePresence mode="wait">
           {renderStep()}
         </AnimatePresence>
 
-        <div className="flex justify-between mt-12 pt-8 border-t border-gray-800">
+        <div className="flex justify-between mt-16 pt-10 border-t border-slate-100">
           <button 
             onClick={handleBack}
             disabled={currentStep === 0 || loading}
-            className="flex items-center gap-2 px-6 py-3 text-gray-400 hover:text-white transition-all disabled:opacity-0"
+            className="flex items-center gap-3 px-10 py-4 text-slate-400 font-black uppercase text-[10px] tracking-widest hover:text-slate-950 transition-all disabled:opacity-0 group"
           >
-            <ArrowLeft className="w-4 h-4" />
-            Back
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-2 transition-transform" />
+            Previous Sector
           </button>
 
           {currentStep === steps.length - 1 ? (
             <button 
               onClick={handleSubmit}
               disabled={loading}
-              className="flex items-center gap-2 px-10 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all shadow-xl shadow-blue-500/20 disabled:opacity-50"
+              className="flex items-center gap-4 px-14 py-5 bg-slate-950 text-white font-black rounded-2xl transition-all shadow-2xl hover:bg-slate-900 shadow-slate-200 active:scale-95 disabled:opacity-50 uppercase text-xs tracking-[0.2em]"
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
+              {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : (
                 <>
-                  Pay $25 & Publish
-                  <CheckCircle2 className="w-5 h-5" />
+                  Commit Asset Provision
+                  <CheckCircle2 className="w-6 h-6 text-[#0eaa99]" />
                 </>
               )}
             </button>
           ) : (
             <button 
               onClick={handleNext}
-              className="flex items-center gap-2 px-10 py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-2xl transition-all"
+              className="flex items-center gap-4 px-14 py-5 bg-[#0eaa99] hover:bg-[#0c9485] text-white font-black rounded-2xl transition-all shadow-2xl shadow-[#0eaa99]/30 hover:shadow-[#0eaa99]/50 active:scale-95 uppercase text-xs tracking-[0.2em] group"
             >
-              Continue
-              <ArrowRight className="w-4 h-4" />
+              Proceed To Phase {currentStep + 2}
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
             </button>
           )}
         </div>

@@ -1,42 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  /* New Light Theme Palette */
-  --background: #F2EAE0;
-  --foreground: #1c2312; /* Deep slate-green for maximum contrast */
+  /* Premium Luxury Light Palette */
+  --background: #F9FAFB;
+  --foreground: #020617; /* Darker Slate for maximum contrast */
   
-  /* Accent Colors */
-  --accent-primary: #9AB17A;
-  --accent-secondary: #C3CC9B;
-  --accent-light: #E8F5BD;
+  /* Accent Colors - Requested Teal (#0eaa99) */
+  --accent-primary: #0eaa99;
+  --accent-secondary: #0c9485;
+  --accent-soft: rgba(14, 170, 153, 0.08);
   
-  /* Glass Elements */
-  --card: rgba(255, 255, 255, 0.6);
-  --card-border: rgba(255, 255, 255, 0.5);
-  --accent-glow: rgba(195, 204, 155, 0.4);
+  /* Glass Elements for Light Mode */
+  --card: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(255, 255, 255, 0.6);
+  --shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.06);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-accent: var(--accent-primary);
+  --color-accent-hover: var(--accent-secondary);
+  --color-teal-brand: #0eaa99;
 }
 
 @layer utilities {
   .glass {
-    @apply bg-white/40 backdrop-blur-xl border border-white/50 text-slate-800;
+    @apply bg-white/70 backdrop-blur-2xl border border-white/50 shadow-sm;
   }
   
   .glass-card {
-    @apply bg-white/60 backdrop-blur-lg border border-white/70 shadow-[0_8px_32px_0_rgba(154,177,122,0.1)] text-slate-800;
+    @apply bg-white/85 backdrop-blur-3xl border border-white/80 shadow-[0_20px_60px_-15px_rgba(14,170,153,0.05)] transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(14,170,153,0.1)];
   }
 
-  .text-glow {
-    text-shadow: 0 0 20px rgba(154, 177, 122, 0.4);
+  .premium-sidebar {
+    @apply bg-white/95 backdrop-blur-3xl border-r border-slate-100 shadow-[8px_0_32px_-16px_rgba(0,0,0,0.04)];
   }
 
-  .bg-radial-glow {
-    background: radial-gradient(circle at center, var(--accent-glow), transparent 70%);
+  .text-glow-brand {
+    text-shadow: 0 0 25px rgba(14, 170, 153, 0.25);
+  }
+
+  .bg-mesh-gradient {
+    background-color: #F9FAFB;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(14, 170, 153, 0.07) 0px, transparent 40%),
+      radial-gradient(at 100% 0%, rgba(14, 170, 153, 0.04) 0px, transparent 40%),
+      radial-gradient(at 100% 100%, rgba(14, 170, 153, 0.07) 0px, transparent 40%),
+      radial-gradient(at 0% 100%, rgba(14, 170, 153, 0.04) 0px, transparent 40%);
   }
 }
 
