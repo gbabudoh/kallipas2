@@ -27,6 +27,7 @@
     "livekit-server-sdk": "^2.15.0",
     "lucide-react": "^1.7.0",
     "minio": "^8.0.7",
+    "mobileui": "^2.0.4",
     "next": "16.2.1",
     "npm": "^11.12.1",
     "npx": "^10.2.2",

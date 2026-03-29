@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Globe, Menu, X, ChevronDown, User, Users, Home, Building, Briefcase, Key, Scale, Map, ExternalLink, Search } from 'lucide-react'
+import { Globe, Menu, X, ChevronDown, User, Users, Home, Building, Briefcase, Key, Scale, Map, ExternalLink, Search, Sparkles, LayoutDashboard, MoreHorizontal } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePathname, useRouter } from 'next/navigation'
 import { SUPPORTED_LANGUAGES } from '@/lib/translate'
@@ -14,7 +14,7 @@ const ACCOUNT_CATEGORIES = [
   { label: 'Independent Realtors', href: '/agents?type=INDEPENDENT_REALTOR', icon: Briefcase },
   { label: 'Agency Agents', href: '/agents?type=AGENCY_AGENT', icon: Users },
   { label: 'Private Landlords', href: '/agents?type=PRIVATE_LANDLORD', icon: Key },
-  { label: 'Property Managers', href: '/agents?type=PROPERTY_MANAGER', icon: Home },
+  { label: 'Property Managers', href: '/agents?type=Home', icon: Home },
   { label: 'Letting Agents', href: '/agents?type=LETTING_AGENT', icon: Building },
   { label: 'Legal Agents', href: '/agents?type=LEGAL_AGENT', icon: Scale },
   { label: 'Surveyors', href: '/agents?type=SURVEYOR', icon: Map },
@@ -53,7 +53,7 @@ export default function Navbar() {
       return null
     }
 
-    const role = getCookie('kallipas_role') || localStorage.getItem('kallipas_role')
+    const role = getCookie('kallipas_role') || (typeof window !== 'undefined' ? localStorage.getItem('kallipas_role') : null)
     if (role && role !== userRole) {
       Promise.resolve().then(() => {
         setUserRole(role)
@@ -71,9 +71,10 @@ export default function Navbar() {
 
   return (
     <>
+    <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
       {/* High-Visibility Dashboard Banner for Logged-in Users on Public Pages */}
       {userRole && !pathname.startsWith(`/${userRole}/dashboard`) && (
-        <div className="bg-[#1c2312] text-white py-2 px-6 flex items-center justify-between sticky top-0 z-60 border-b border-[#0eab9b]/30">
+        <div className="bg-[#1c2312] text-white py-2 px-6 flex items-center justify-between border-b border-[#0eab9b]/30">
           <div className="flex items-center gap-3">
              <div className="w-2 h-2 rounded-full bg-[#0eab9b] animate-pulse" />
              <span className="text-[10px] font-bold uppercase tracking-widest text-[#0eab9b]">
@@ -90,8 +91,8 @@ export default function Navbar() {
       )}
 
       <nav 
-        className={`fixed ${userRole && !pathname.startsWith(`/${userRole}/dashboard`) ? 'top-10' : 'top-0'} left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'py-4 bg-white/70 backdrop-blur-lg border-b border-[#0eab9b]/20 shadow-sm' : 'py-6 bg-transparent'
+        className={`transition-all duration-300 ${
+        isScrolled ? 'py-4 bg-white/80 backdrop-blur-lg border-b border-[#0eab9b]/20 shadow-sm' : 'py-6 bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
@@ -289,6 +290,51 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      </nav>
+    </header>
+
+    {/* Floating Bottom Nav for Mobile */}
+    <nav className="md:hidden fixed bottom-6 left-6 right-6 z-[9999]">
+      <div className="bg-white/95 backdrop-blur-2xl border border-slate-200/80 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.18)] rounded-[2rem] flex items-stretch h-[4.5rem] px-2 relative overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#0eab9b]/40 to-transparent" />
+        
+        <Link href="/" className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all ${pathname === '/' ? 'text-[#0eab9b]' : 'text-slate-400'}`}>
+          <Home className="w-6 h-6" />
+          <span className="text-[9px] font-black uppercase tracking-tighter">Home</span>
+        </Link>
+
+        <Link href="/listings" className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all ${pathname === '/listings' ? 'text-[#0eab9b]' : 'text-slate-400'}`}>
+          <Search className="w-6 h-6" />
+          <span className="text-[9px] font-black uppercase tracking-tighter">{t.nav.marketplace}</span>
+        </Link>
+
+        {userRole ? (
+          <Link href={`/${userRole}/dashboard`} className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all ${pathname.includes('/dashboard') ? 'text-[#0eab9b]' : 'text-slate-400'}`}>
+            <LayoutDashboard className="w-6 h-6" />
+            <span className="text-[9px] font-black uppercase tracking-tighter">Dash</span>
+          </Link>
+        ) : (
+          <>
+            <Link href="/login" className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all ${pathname === '/login' ? 'text-[#0eab9b]' : 'text-slate-400'}`}>
+              <User className="w-6 h-6" />
+              <span className="text-[9px] font-black uppercase tracking-tighter">{t.nav.signIn}</span>
+            </Link>
+            <Link href="/register" className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all ${pathname === '/register' ? 'text-[#0eab9b]' : 'text-slate-400'}`}>
+              <Sparkles className="w-6 h-6" />
+              <span className="text-[9px] font-black uppercase tracking-tighter">Join</span>
+            </Link>
+          </>
+        )}
+
+        <button 
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all ${isMobileMenuOpen ? 'text-[#0eab9b]' : 'text-slate-400'}`}
+        >
+          <MoreHorizontal className="w-6 h-6" />
+          <span className="text-[9px] font-black uppercase tracking-tighter">Menu</span>
+        </button>
+      </div>
     </nav>
     </>
   )

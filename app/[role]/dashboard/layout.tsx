@@ -9,14 +9,12 @@ import {
   MessageSquare,
   Video,
   Settings,
-  Globe,
   User as UserIcon,
   Users,
   Building,
   Scale,
-  Map,
+  Map as MapIcon,
   FileText,
-  ArrowRight,
   Inbox,
   ChevronRight,
   Search,
@@ -24,8 +22,11 @@ import {
   CalendarDays,
 } from 'lucide-react'
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import LogoutButton from '@/components/dashboard/logout-button'
+import HomeButton from '@/components/dashboard/home-button'
 import DashboardLangSwitcher from '@/components/dashboard/lang-switcher'
+import MobileDashboardNav, { type SerializableNavItem } from '@/components/dashboard/mobile-nav'
 import type { Dict } from '@/lib/i18n'
 
 const ROLE_TO_SEED_USER: Record<string, string> = {
@@ -40,6 +41,25 @@ const ROLE_TO_SEED_USER: Record<string, string> = {
   'buyer': 'demo_buyer',
 }
 
+// Maps icon component references → string names for serialization to client components
+const ICON_TO_NAME = new Map([
+  [BarChart3, 'BarChart3'],
+  [Home, 'Home'],
+  [PlusSquare, 'PlusSquare'],
+  [MessageSquare, 'MessageSquare'],
+  [Video, 'Video'],
+  [Settings, 'Settings'],
+  [Users, 'Users'],
+  [Building, 'Building'],
+  [Scale, 'Scale'],
+  [MapIcon, 'Map'],
+  [FileText, 'FileText'],
+  [Inbox, 'Inbox'],
+  [Search, 'Search'],
+  [Heart, 'Heart'],
+  [CalendarDays, 'CalendarDays'],
+])
+
 const getRoleNavItems = (roleSlug: string, d: Dict['dashboard']) => {
   const basePrefix = `/${roleSlug}/dashboard`
 
@@ -53,7 +73,7 @@ const getRoleNavItems = (roleSlug: string, d: Dict['dashboard']) => {
     case 'surveyor':
       return [
         commonNav[0],
-        { label: d.inspections, icon: Map, href: `${basePrefix}/inspections` },
+        { label: d.inspections, icon: MapIcon, href: `${basePrefix}/inspections` },
         { label: d.valuationReports, icon: FileText, href: `${basePrefix}/reports` },
         commonNav[1],
         commonNav[2],
@@ -118,9 +138,15 @@ export default async function DashboardLayout({
 }) {
   const { role } = await params
   const username = ROLE_TO_SEED_USER[role]
-  
+
   if (!username) {
     redirect('/dashboard')
+  }
+
+  const cookieStore = await cookies()
+  const sessionRole = cookieStore.get('kallipas_role')?.value
+  if (!sessionRole || sessionRole !== role) {
+    redirect('/login')
   }
 
   const profile = await prisma.profile.findUnique({
@@ -130,23 +156,35 @@ export default async function DashboardLayout({
   const t = await getServerT()
   const navItems = getRoleNavItems(role, t.dashboard)
 
+  // Serializable form for the client-side mobile nav component
+  const mobileNavItems: SerializableNavItem[] = navItems.map(item => ({
+    label: item.label,
+    href: item.href,
+    iconName: ICON_TO_NAME.get(item.icon) ?? 'BarChart3',
+  }))
+
+  const profileData = profile
+    ? { fullName: profile.fullName, avatarUrl: profile.avatarUrl, role: profile.role }
+    : null
+
   return (
-    <div className="flex h-screen bg-mesh-gradient text-slate-900 font-sans selection:bg-[#0eaa99]/30">
-      {/* Sidebar */}
-      <aside className="w-80 premium-sidebar flex flex-col z-20">
+    <div className="flex min-h-screen md:h-screen bg-mesh-gradient text-slate-900 font-sans selection:bg-[#0eaa99]/30">
+
+      {/* ── Desktop Sidebar (lg+) ─────────────────────── */}
+      <aside className="hidden md:flex w-80 premium-sidebar flex-col z-20">
         <div className="p-10 border-b border-slate-100 flex items-center justify-center relative group">
-           <Link href={['private-seller', 'independent-realtor'].includes(role) ? `/${role}/dashboard` : "/"} className="cursor-pointer">
-             <Image 
-               src="/logo.png"
-               alt="Kallipas Logo"
-               width={160}
-               height={46}
-               priority
-               className="w-40 h-auto object-contain transition-transform duration-700 group-hover:scale-110" 
-               style={{ width: 'auto', height: 'auto' }}
-             />
-           </Link>
-           <div className="absolute -bottom-px left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#0eaa99]/30 to-transparent" />
+          <Link href="/" className="cursor-pointer">
+            <Image
+              src="/logo.png"
+              alt="Kallipas Logo"
+              width={160}
+              height={46}
+              priority
+              className="w-40 h-auto object-contain transition-transform duration-700 group-hover:scale-110"
+              style={{ width: 'auto', height: 'auto' }}
+            />
+          </Link>
+          <div className="absolute -bottom-px left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#0eaa99]/30 to-transparent" />
         </div>
 
         <nav className="flex-1 p-8 space-y-2 overflow-y-auto custom-scrollbar">
@@ -158,7 +196,6 @@ export default async function DashboardLayout({
             >
               <div className="absolute inset-0 bg-slate-50 opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-0 bg-[#0eaa99] rounded-r-full transition-all duration-500 group-hover:h-3/5" />
-              
               <item.icon className="w-5 h-5 text-slate-400 group-hover:text-[#0eaa99] transition-colors relative z-10" />
               <span className="font-bold text-sm text-slate-500 group-hover:text-slate-900 relative z-10 tracking-tight">{item.label}</span>
             </Link>
@@ -185,27 +222,24 @@ export default async function DashboardLayout({
             </div>
           </div>
 
-          {['private-seller', 'independent-realtor'].includes(role) && (
-            <Link 
-              href="http://localhost:3000/?view=main" 
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full h-14 flex items-center justify-center gap-3 bg-[#0eaa99] rounded-[1.5rem] text-sm font-black transition-all text-white hover:bg-[#0eaa99]/90 hover:shadow-2xl hover:shadow-[#0eaa99]/30 group relative overflow-hidden active:scale-95"
-            >
-              <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <Globe className="w-4 h-4 relative z-10" />
-              <span className="relative z-10 tracking-tight">{t.dashboard.mainWebsite}</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform relative z-10" />
-            </Link>
-          )}
-
+          <HomeButton label={t.dashboard.mainWebsite} />
           <LogoutButton />
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto relative custom-scrollbar flex flex-col">
-        <header className="h-24 bg-white/70 backdrop-blur-xl flex items-center justify-between px-12 sticky top-0 z-30 border-b border-slate-100">
+      {/* ── Mobile Nav (top bar + drawer + bottom tabs) ── */}
+      <MobileDashboardNav
+        navItems={mobileNavItems}
+        role={role}
+        profile={profileData}
+        mainWebsiteLabel={t.dashboard.mainWebsite}
+      />
+
+      {/* ── Main Content ──────────────────────────────── */}
+      <main className="flex-1 overflow-y-auto relative custom-scrollbar flex flex-col pt-16 md:pt-0">
+
+        {/* Desktop header (lg+) */}
+        <header className="hidden md:flex h-24 bg-white/70 backdrop-blur-xl items-center justify-between px-12 sticky top-0 z-30 border-b border-slate-100">
           <div className="flex items-center gap-3">
             <div className="w-2.5 h-2.5 rounded-full bg-[#0eaa99] shadow-[0_0_15px_rgba(14,170,153,0.5)]" />
             <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">
@@ -214,7 +248,6 @@ export default async function DashboardLayout({
               <span className="text-slate-900">{t.dashboard.liveWorkspace}</span>
             </div>
           </div>
-          
           <div className="flex items-center gap-8">
             <DashboardLangSwitcher />
             <div className="w-px h-8 bg-slate-100" />
@@ -222,10 +255,12 @@ export default async function DashboardLayout({
           </div>
         </header>
 
-        <div className="max-w-7xl w-full mx-auto p-12">
+        {/* Page content */}
+        <div className="max-w-7xl w-full mx-auto p-4 pb-32 md:p-12 md:pb-12">
           {children}
         </div>
       </main>
+
     </div>
   )
 }

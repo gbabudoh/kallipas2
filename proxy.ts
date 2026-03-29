@@ -21,7 +21,7 @@ export function proxy(request: NextRequest) {
   }
 
   // 2. Define Guest-Only routes
-  const isGuestRoute = pathname === '/' || pathname === '/login' || pathname === '/register'
+  const isGuestRoute = pathname === '/login' || pathname === '/register'
   
   // 3. Define Dashboard routes
   const isDashboardRoute = pathname.includes('/dashboard')
