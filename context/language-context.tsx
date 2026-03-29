@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
+import { useRouter } from 'next/navigation'
 import { getDict, type Dict } from '@/lib/i18n'
 
 type LangContextType = {
@@ -13,6 +14,7 @@ const LangContext = createContext<LangContextType | null>(null)
 
 export function LanguageProvider({ children, initialLang = 'EN' }: { children: ReactNode; initialLang?: string }) {
   const [lang, setLangState] = useState(initialLang)
+  const router = useRouter()
 
   useEffect(() => {
     const stored = localStorage.getItem('kallipas_lang') ?? initialLang
@@ -30,7 +32,8 @@ export function LanguageProvider({ children, initialLang = 'EN' }: { children: R
     setLangState(code)
     localStorage.setItem('kallipas_lang', code)
     document.cookie = `kallipas_lang=${code}; path=/; max-age=31536000; SameSite=Lax`
-  }, [])
+    router.refresh()
+  }, [router])
 
   const t = getDict(lang)
 

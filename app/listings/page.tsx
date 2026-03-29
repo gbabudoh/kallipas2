@@ -10,12 +10,32 @@ import {
   MOCK_LISTINGS,
   PROPERTY_TYPE_COLOURS,
   PROPERTY_CATEGORIES,
-  LISTING_TYPE_LABEL,
 } from "./_data/mock-listings"
 import {
   PROPERTY_TYPE_IMAGES,
   PROPERTY_TYPE_FALLBACK,
 } from "./_data/listing-media"
+import { translateBatch, type LanguageCode } from "@/lib/translate"
+import { cookies } from "next/headers"
+
+interface UnifiedListing {
+  id: string
+  title: string
+  address: string | null
+  city: string | null
+  country: string | null
+  price: string
+  listingType: string
+  propertyType: string
+  beds: number
+  baths: number
+  sqft: number
+  verified: boolean
+  seller: string
+  tag?: string
+  images?: string[]
+  isMock: boolean
+}
 
 export default async function ListingsPage({
   searchParams,
@@ -24,6 +44,8 @@ export default async function ListingsPage({
 }) {
   const { type, cat, country, city } = await searchParams
   const t = await getServerT()
+  const cookieStore = await cookies()
+  const lang = (cookieStore.get('kallipas_lang')?.value ?? 'EN') as LanguageCode
 
   // Build country → cities map from mock data
   const citiesByCountry: Record<string, string[]> = {}
@@ -35,10 +57,7 @@ export default async function ListingsPage({
   const countries = Object.keys(citiesByCountry).sort()
 
   // Fetch real listings from DB
-  let dbListings: Array<{
-    id: string; title: string; address: string | null; city: string | null; country: string | null
-    price: string; listingType: string; propertyType: string; verified: boolean; seller: string; isMock: false
-  }> = []
+  let dbListings: UnifiedListing[] = []
 
   try {
     const raw = await prisma.listing.findMany({
@@ -51,16 +70,41 @@ export default async function ListingsPage({
       },
       include: { owner: { select: { fullName: true, isVerified: true } } },
       orderBy: { createdAt: 'desc' },
-      take: 48,
     })
-    dbListings = raw.map((l) => ({
-      id: l.id, title: l.title, address: l.address, city: l.city, country: l.country,
-      price: `${l.currency} ${Number(l.price).toLocaleString()}`,
-      listingType: l.listingType, propertyType: l.propertyType,
-      verified: l.owner?.isVerified ?? false, seller: l.owner?.fullName ?? 'Anonymous',
-      isMock: false as const,
-    }))
-  } catch { /* DB unavailable — fall through to mock data */ }
+    dbListings = raw.map((l) => {
+      const amenities = (l.amenities as Array<Record<string, unknown>>) || []
+      const getStat = (key: string) => {
+        const found = amenities.find(a => typeof a === 'object' && a !== null && key in a)
+        return found ? Number(found[key]) : 0
+      }
+
+      const pType = (l.propertyType || '').toLowerCase().trim()
+      const amenitiesData = (l.amenities && typeof l.amenities === 'object') ? (l.amenities as Record<string, unknown>) : {}
+      const amenityImages = Array.isArray(amenitiesData.images) ? (amenitiesData.images as string[]) : []
+      const images = (l.images && l.images.length > 0) ? l.images : amenityImages
+
+      return {
+        id: l.id,
+        title: l.title,
+        address: l.address,
+        city: l.city,
+        country: l.country,
+        price: `${l.currency} ${Number(l.price).toLocaleString()}`,
+        listingType: l.listingType,
+        propertyType: pType,
+        verified: l.owner?.isVerified ?? false,
+        seller: l.owner?.fullName ?? 'Anonymous',
+        beds: getStat('beds'),
+        baths: getStat('baths'),
+        sqft: getStat('sqft'),
+        images,
+        isMock: false as const,
+      }
+    })
+  } catch (error) {
+    console.error('DB Fetch Error:', error)
+    /* DB unavailable — fall through to mock data */
+  }
 
   const filteredMock = MOCK_LISTINGS.filter((l) => {
     if (type    && l.listingType   !== type)    return false
@@ -70,10 +114,30 @@ export default async function ListingsPage({
     return true
   })
 
-  const listings = dbListings.length > 0 ? dbListings : filteredMock
+  const listings: UnifiedListing[] = dbListings.length > 0 ? dbListings : filteredMock
+
+  // AI Translation for Listing Content
+  let translatedListings = listings
+  if (lang !== 'EN' && listings.length > 0) {
+    try {
+      // Consolidate translation into one batch call
+      const stringsToTranslate = listings.flatMap(l => [l.title, l.tag || ''])
+      const translatedResults = await translateBatch(stringsToTranslate, lang)
+
+      translatedListings = listings.map((l, i) => ({
+        ...l,
+        title: translatedResults[i * 2],
+        tag: l.tag !== undefined ? translatedResults[i * 2 + 1] : undefined
+      })) as UnifiedListing[]
+    } catch (error) {
+      console.error('Batch Translation Error:', error)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#F9FAFB]">
+      <title>{`${t.listings.marketplace} | Kallipas`}</title>
+      <meta name="description" content={`Browse ${listings.length} luxury real estate listings on Kallipas. Find your dream home, office, or investment property worldwide.`} />
       <Navbar />
       <main className="pt-32 pb-24 max-w-7xl mx-auto px-6">
 
@@ -107,33 +171,42 @@ export default async function ListingsPage({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {listings.map((listing) => {
-              const typeColour = PROPERTY_TYPE_COLOURS[listing.propertyType] ?? PROPERTY_TYPE_COLOURS.residential
-              const beds = 'beds' in listing ? listing.beds : null
-              const baths = 'baths' in listing ? listing.baths : null
-              const sqft = 'sqft' in listing ? listing.sqft : null
-              const tag = 'tag' in listing ? listing.tag : null
-              const catLabel = PROPERTY_CATEGORIES[listing.propertyType] ?? listing.propertyType
+            {translatedListings.map((listing) => {
+                const normalizedPType = listing.propertyType // already normalized in map
+                const typeColour = PROPERTY_TYPE_COLOURS[normalizedPType] ?? PROPERTY_TYPE_COLOURS.residential
+                const beds = 'beds' in listing ? listing.beds : null
+                const baths = 'baths' in listing ? listing.baths : null
+                const sqft = 'sqft' in listing ? listing.sqft : null
+                const tag = 'tag' in listing ? listing.tag : null
+                
+                // Prioritize listing's specific images, fallback to curated type sets
+                const displayImage = (listing.images && listing.images.length > 0)
+                  ? listing.images[0]
+                  : (PROPERTY_TYPE_IMAGES[normalizedPType]?.[0] ?? PROPERTY_TYPE_FALLBACK[normalizedPType] ?? PROPERTY_TYPE_FALLBACK.residential)
 
-              return (
-                <div
-                  key={listing.id}
-                  className="bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:shadow-[#0eaa99]/10 hover:border-[#0eaa99]/30 transition-all duration-500 flex flex-col"
-                >
-                  {/* Image area */}
-                  <div className="aspect-[16/10] relative flex-shrink-0 overflow-hidden">
-                    <CardImage
-                      src={PROPERTY_TYPE_IMAGES[listing.propertyType]?.[0] ?? PROPERTY_TYPE_FALLBACK[listing.propertyType] ?? PROPERTY_TYPE_FALLBACK.residential}
-                      fallback={PROPERTY_TYPE_FALLBACK[listing.propertyType] ?? PROPERTY_TYPE_FALLBACK.residential}
-                      alt={listing.title}
-                    />
+                // Localized Category Label
+                const catKey = normalizedPType === 'mixed_use' ? 'mixedUse' : normalizedPType
+                const catLabel = (t.listings as Record<string, string>)[catKey] ?? (PROPERTY_CATEGORIES[normalizedPType] ?? normalizedPType)
+
+                return (
+                  <div
+                    key={listing.id}
+                    className="group bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:shadow-[#0eaa99]/10 hover:border-[#0eaa99]/30 transition-all duration-500 flex flex-col"
+                  >
+                    {/* Image area */}
+                    <div className="aspect-[16/10] relative flex-shrink-0 overflow-hidden bg-slate-100">
+                      <CardImage
+                        src={displayImage}
+                        fallback={PROPERTY_TYPE_FALLBACK[normalizedPType] ?? PROPERTY_TYPE_FALLBACK.residential}
+                        alt={listing.title}
+                      />
                     {tag && (
                       <div className="absolute top-5 left-5 px-4 py-1.5 bg-[#0eaa99] rounded-xl text-[10px] font-black uppercase tracking-widest text-white shadow-lg">
                         {tag}
                       </div>
                     )}
                     <div className={`absolute top-5 right-5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border bg-white/90 backdrop-blur-sm ${typeColour}`}>
-                      {LISTING_TYPE_LABEL[listing.listingType] ?? listing.listingType}
+                      {listing.listingType === 'sale' ? t.listings.forSale : (listing.listingType === 'rent' ? t.listings.toLet : listing.listingType)}
                     </div>
                   </div>
 

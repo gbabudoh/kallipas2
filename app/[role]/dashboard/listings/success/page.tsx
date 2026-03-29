@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma'
 import Link from 'next/link'
 import { CheckCircle2, ArrowRight, Home } from 'lucide-react'
+import { getServerT } from '@/lib/i18n/server'
 
 export default async function ListingSuccessPage({
   searchParams,
@@ -8,6 +9,7 @@ export default async function ListingSuccessPage({
   searchParams: Promise<{ listingId?: string }>
 }) {
   const { listingId } = await searchParams
+  const t = await getServerT()
 
   let listing = null
   if (listingId) {
@@ -28,9 +30,9 @@ export default async function ListingSuccessPage({
         </div>
 
         <div>
-          <h1 className="text-3xl font-bold mb-3">Listing Published! 🎉</h1>
+          <h1 className="text-3xl font-bold mb-3">{t.listings.published}</h1>
           <p className="text-gray-400 text-lg">
-            Your property is now live on the global marketplace.
+            {t.listings.publishedDesc}
           </p>
         </div>
 
@@ -53,7 +55,7 @@ export default async function ListingSuccessPage({
 
         <div className="p-4 bg-blue-500/5 rounded-2xl border border-blue-500/10">
           <p className="text-sm text-blue-400">
-            ✨ Your listing is being automatically translated to French, Spanish, and Arabic to maximize global reach.
+            ✨ {t.listings.aiTranslationNotice}
           </p>
         </div>
 
@@ -63,14 +65,14 @@ export default async function ListingSuccessPage({
             className="flex items-center gap-2 px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition-all"
           >
             <Home className="w-4 h-4" />
-            My Listings
+            {t.dashboard.myListings}
           </Link>
           {listing && (
             <Link
               href={`/listings/${listing.id}`}
               className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20"
             >
-              View Listing
+              {t.listings.viewListing}
               <ArrowRight className="w-4 h-4" />
             </Link>
           )}

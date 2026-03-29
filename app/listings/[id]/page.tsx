@@ -12,11 +12,13 @@ import VideoTour from './_components/video-tour'
 import MortgageCalculator from './_components/mortgage-calculator'
 import EPCRating from './_components/epc-rating'
 import SimilarListings from './_components/similar-listings'
+import { getServerT } from '@/lib/i18n/server'
+import { cookies } from 'next/headers'
+import { translateBatch, type LanguageCode } from '@/lib/translate'
 import {
   MOCK_LISTINGS,
   PROPERTY_TYPE_COLOURS,
   PROPERTY_CATEGORIES,
-  LISTING_TYPE_LABEL,
 } from '../_data/mock-listings'
 import {
   PROPERTY_TYPE_IMAGES,
@@ -45,20 +47,42 @@ export default async function ListingDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
+  const t = await getServerT()
+  const lang = (await cookies()).get('kallipas_lang')?.value as LanguageCode ?? 'EN'
 
   // Mock listing
   const mock = MOCK_LISTINGS.find((l) => l.id === id)
   if (mock) {
-    const images = PROPERTY_TYPE_IMAGES[mock.propertyType] ?? PROPERTY_TYPE_IMAGES.residential
-    const videos = getMockVideos(mock.propertyType, images[0])
-    const epc    = EPC_DEFAULTS[mock.propertyType] ?? { current: 'D', potential: 'C' }
+    const pType  = mock.propertyType.toLowerCase().trim()
+    const images = PROPERTY_TYPE_IMAGES[pType] ?? PROPERTY_TYPE_IMAGES.residential
+    const videos = getMockVideos(pType, images[0])
+    const epc    = EPC_DEFAULTS[pType] ?? { current: 'D', potential: 'C' }
+
+    // AI Translation with batching for performance
+    const stringsToTranslate = [mock.title, mock.description]
+    if (mock.tag) stringsToTranslate.push(mock.tag)
+    const amenities = mock.amenities || []
+    stringsToTranslate.push(...amenities)
+
+    const translatedResults = lang !== 'EN'
+      ? await translateBatch(stringsToTranslate, lang)
+      : stringsToTranslate
+
+    let rIdx = 0
+    const translatedTitle = lang !== 'EN' ? translatedResults[rIdx++] : mock.title
+    const translatedDesc  = lang !== 'EN' ? translatedResults[rIdx++] : mock.description
+    const translatedTag   = (mock.tag && lang !== 'EN') ? translatedResults[rIdx++] : mock.tag
+    const translatedAmenities = (amenities.length > 0 && lang !== 'EN')
+      ? amenities.map(() => translatedResults[rIdx++])
+      : amenities
 
     return (
       <ListingView
+        t={t}
         listing={{
           id: mock.id,
-          title: mock.title,
-          description: mock.description,
+          title: translatedTitle,
+          description: translatedDesc,
           address: mock.address,
           city: mock.city,
           country: mock.country,
@@ -66,12 +90,12 @@ export default async function ListingDetailPage({
           numericPrice: extractNumericPrice(mock.price),
           currencySymbol: extractCurrencySymbol(mock.price),
           listingType: mock.listingType,
-          propertyType: mock.propertyType,
+          propertyType: pType,
           beds: mock.beds,
           baths: mock.baths,
           sqft: mock.sqft,
-          tag: mock.tag,
-          amenities: mock.amenities,
+          tag: translatedTag,
+          amenities: translatedAmenities,
           verified: mock.verified,
           seller: mock.seller,
           sellerRole: 'Member',
@@ -97,18 +121,40 @@ export default async function ListingDetailPage({
 
   if (!dbListing) notFound()
 
+  // AI Translation with batching for DB content
   const amenities = Array.isArray(dbListing.amenities) ? dbListing.amenities as string[] : []
+  const dbStrings = [dbListing.title, dbListing.description || '']
+  dbStrings.push(...amenities)
+
+  const dbResults = lang !== 'EN'
+    ? await translateBatch(dbStrings, lang)
+    : dbStrings
+
+  let dbIdx = 0
+  const translatedTitle = lang !== 'EN' ? dbResults[dbIdx++] : dbListing.title
+  const translatedDesc  = (dbListing.description && lang !== 'EN') ? dbResults[dbIdx++] : (dbListing.description ?? '')
+  const translatedAmenities = (amenities.length > 0 && lang !== 'EN') 
+    ? amenities.map(() => dbResults[dbIdx++]) 
+    : amenities
+  const amenitiesData = dbListing.amenities as Record<string, unknown>
+  const dbImages = (amenitiesData && Array.isArray(amenitiesData.images)) ? (amenitiesData.images as string[]) : []
+
+  const pType  = dbListing.propertyType.toLowerCase().trim()
   const priceStr = `${dbListing.currency} ${Number(dbListing.price).toLocaleString()}`
-  const images = PROPERTY_TYPE_IMAGES[dbListing.propertyType] ?? PROPERTY_TYPE_IMAGES.residential
-  const videos = getMockVideos(dbListing.propertyType, images[0])
-  const epc    = EPC_DEFAULTS[dbListing.propertyType] ?? { current: 'D', potential: 'C' }
+  const images = dbImages.length > 0 
+    ? dbImages 
+    : (PROPERTY_TYPE_IMAGES[pType] ?? PROPERTY_TYPE_IMAGES.residential)
+
+  const videos = getMockVideos(pType, images[0])
+  const epc    = EPC_DEFAULTS[pType] ?? { current: 'D', potential: 'C' }
 
   return (
     <ListingView
+      t={t}
       listing={{
         id: dbListing.id,
-        title: dbListing.title,
-        description: dbListing.description ?? '',
+        title: translatedTitle,
+        description: translatedDesc,
         address: dbListing.address ?? '',
         city: dbListing.city ?? '',
         country: dbListing.country ?? '',
@@ -116,12 +162,12 @@ export default async function ListingDetailPage({
         numericPrice: Number(dbListing.price),
         currencySymbol: dbListing.currency,
         listingType: dbListing.listingType,
-        propertyType: dbListing.propertyType,
+        propertyType: pType,
         beds: null,
         baths: null,
         sqft: null,
         tag: null,
-        amenities,
+        amenities: translatedAmenities,
         verified: dbListing.owner?.isVerified ?? false,
         seller: dbListing.owner?.fullName ?? 'Anonymous',
         sellerRole: dbListing.owner?.role ?? 'Member',
@@ -136,10 +182,13 @@ export default async function ListingDetailPage({
 
 // ── Shared view ───────────────────────────────────────────────────────────────
 
+import { type Dict } from '@/lib/i18n'
+
 type VideoItem = { id: string; label: string; duration: string; thumb: string; embedUrl?: string }
 type EPCData   = { current: string; potential: string }
 
 type ListingViewProps = {
+  t: Dict
   listing: {
     id: string
     title: string
@@ -167,10 +216,9 @@ type ListingViewProps = {
   }
 }
 
-function ListingView({ listing }: ListingViewProps) {
+function ListingView({ t, listing }: ListingViewProps) {
   const typeColour = PROPERTY_TYPE_COLOURS[listing.propertyType] ?? PROPERTY_TYPE_COLOURS.residential
   const catLabel   = PROPERTY_CATEGORIES[listing.propertyType] ?? listing.propertyType
-  const typeLabel  = LISTING_TYPE_LABEL[listing.listingType] ?? listing.listingType
   const isSale     = listing.listingType === 'sale'
 
   const sellerRoleLabel = typeof listing.sellerRole === 'string'
@@ -186,7 +234,7 @@ function ListingView({ listing }: ListingViewProps) {
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-8">
           <Link href="/listings" className="hover:text-[#0eaa99] transition-colors flex items-center gap-1.5">
-            <ArrowLeft className="w-3 h-3" /> Listings
+            <ArrowLeft className="w-3 h-3" /> {t.listings.backToListings}
           </Link>
           <ChevronRight className="w-3 h-3 text-slate-200" />
           <span className="text-slate-600 truncate max-w-xs">{listing.title}</span>
@@ -208,10 +256,10 @@ function ListingView({ listing }: ListingViewProps) {
             <div className="bg-white rounded-[2rem] border border-slate-100 p-8 shadow-sm">
               <div className="flex flex-wrap items-center gap-2 mb-4">
                 <span className={`px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest ${typeColour}`}>
-                  {catLabel}
+                  {t.listings[listing.propertyType as keyof typeof t.listings] || catLabel}
                 </span>
                 <span className={`px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest ${typeColour}`}>
-                  {typeLabel}
+                  {listing.listingType === 'sale' ? t.listings.forSale : t.listings.toLet}
                 </span>
                 {listing.tag && (
                   <span className="px-3 py-1 rounded-full bg-[#0eaa99] text-white text-[10px] font-black uppercase tracking-widest">
@@ -220,7 +268,7 @@ function ListingView({ listing }: ListingViewProps) {
                 )}
                 {listing.verified && (
                   <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-[#0eaa99]">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> Verified
+                    <CheckCircle2 className="w-3.5 h-3.5" /> {t.listings.verified}
                   </span>
                 )}
               </div>
@@ -240,19 +288,19 @@ function ListingView({ listing }: ListingViewProps) {
                   {listing.beds !== null && listing.beds > 0 && (
                     <span className="flex items-center gap-2">
                       <BedDouble className="w-4 h-4 text-slate-300" />
-                      {listing.beds} {listing.beds === 1 ? 'Bed' : 'Beds'}
+                      {listing.beds} {listing.beds === 1 ? t.listings.bed : t.listings.beds}
                     </span>
                   )}
                   {listing.baths !== null && listing.baths > 0 && (
                     <span className="flex items-center gap-2">
                       <Bath className="w-4 h-4 text-slate-300" />
-                      {listing.baths} {listing.baths === 1 ? 'Bath' : 'Baths'}
+                      {listing.baths} {listing.baths === 1 ? t.listings.bath : t.listings.baths}
                     </span>
                   )}
                   {listing.sqft !== null && listing.sqft > 0 && (
                     <span className="flex items-center gap-2">
                       <Square className="w-4 h-4 text-slate-300" />
-                      {listing.sqft.toLocaleString()} sqft
+                      {listing.sqft.toLocaleString()} {t.listings.sqft}
                     </span>
                   )}
                 </div>
@@ -262,7 +310,7 @@ function ListingView({ listing }: ListingViewProps) {
             {/* Description */}
             {listing.description && (
               <div className="bg-white rounded-[2rem] border border-slate-100 p-8 shadow-sm">
-                <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-4">Description</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-4">{t.listings.description}</p>
                 <p className="text-slate-600 font-medium leading-relaxed whitespace-pre-wrap">
                   {listing.description}
                 </p>
@@ -275,7 +323,7 @@ function ListingView({ listing }: ListingViewProps) {
             {/* Amenities */}
             {listing.amenities.length > 0 && (
               <div className="bg-white rounded-[2rem] border border-slate-100 p-8 shadow-sm">
-                <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-5">Features & Amenities</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-5">{t.listings.features}</p>
                 <div className="flex flex-wrap gap-2.5">
                   {listing.amenities.map((a) => (
                     <span
@@ -291,20 +339,20 @@ function ListingView({ listing }: ListingViewProps) {
 
             {/* Property details */}
             <div className="bg-white rounded-[2rem] border border-slate-100 p-8 shadow-sm">
-              <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-5">Property Details</p>
+              <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-5">{t.listings.details}</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
-                <DetailCell label="Type"    value={catLabel} />
-                <DetailCell label="Listing" value={typeLabel} />
-                {listing.city    && <DetailCell label="City"    value={listing.city} />}
-                {listing.country && <DetailCell label="Country" value={listing.country} />}
+                <DetailCell label={t.listings.type}    value={t.listings[listing.propertyType as keyof typeof t.listings] || catLabel} />
+                <DetailCell label={t.listings.listing} value={listing.listingType === 'sale' ? t.listings.forSale : t.listings.toLet} />
+                {listing.city    && <DetailCell label={t.listings.city}    value={listing.city} />}
+                {listing.country && <DetailCell label={t.listings.country} value={listing.country} />}
                 {listing.sqft !== null && listing.sqft > 0 && (
-                  <DetailCell label="Size" value={`${listing.sqft.toLocaleString()} sqft`} />
+                  <DetailCell label={t.listings.size} value={`${listing.sqft.toLocaleString()} ${t.listings.sqft}`} />
                 )}
                 {listing.beds !== null && listing.beds > 0 && (
-                  <DetailCell label="Bedrooms"  value={String(listing.beds)} />
+                  <DetailCell label={t.listings.bedrooms}  value={String(listing.beds)} />
                 )}
                 {listing.baths !== null && listing.baths > 0 && (
-                  <DetailCell label="Bathrooms" value={String(listing.baths)} />
+                  <DetailCell label={t.listings.bathrooms} value={String(listing.baths)} />
                 )}
               </div>
             </div>
@@ -312,7 +360,7 @@ function ListingView({ listing }: ListingViewProps) {
             {/* Key info strip */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
-                { icon: ShieldCheck, label: 'Verified Listing', sub: listing.verified ? 'Yes' : 'Pending' },
+                { icon: ShieldCheck, label: t.listings.verified, sub: listing.verified ? 'Yes' : 'Pending' },
                 { icon: CalendarDays, label: 'Availability', sub: isSale ? 'Immediate' : 'Now' },
                 { icon: Wifi, label: 'Virtual Tour', sub: 'Available' },
                 { icon: Zap, label: 'EPC Rating', sub: listing.epc.current },
@@ -333,7 +381,7 @@ function ListingView({ listing }: ListingViewProps) {
             {/* Map placeholder */}
             <div className="bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm">
               <div className="p-6 border-b border-slate-50">
-                <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-1">Location</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-1">{t.listings.location}</p>
                 <p className="font-black text-slate-900 tracking-tight">{[listing.address, listing.city, listing.country].filter(Boolean).join(', ')}</p>
               </div>
               <div className="h-56 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center relative overflow-hidden">
@@ -359,7 +407,7 @@ function ListingView({ listing }: ListingViewProps) {
             {/* Price card */}
             <div className="bg-white rounded-[2rem] border border-slate-100 p-8 shadow-sm">
               <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-1">
-                {isSale ? 'Asking Price' : 'Rental Price'}
+                {isSale ? t.listings.askingPrice : t.listings.rentalPrice}
               </p>
               <p className="text-3xl font-black tracking-tight text-[#0eaa99] mb-3">{listing.price}</p>
               {isSale && listing.numericPrice > 0 && (
@@ -372,7 +420,7 @@ function ListingView({ listing }: ListingViewProps) {
             {/* CTA card */}
             <div className="bg-white rounded-[2rem] border border-slate-100 p-8 shadow-sm space-y-5 sticky top-28">
               <div>
-                <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-3">Listed by</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-3">{t.listings.listedBy}</p>
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 rounded-2xl bg-[#0eaa99]/10 flex items-center justify-center flex-shrink-0">
                     <Tag className="w-4 h-4 text-[#0eaa99]" />
@@ -388,21 +436,21 @@ function ListingView({ listing }: ListingViewProps) {
 
               <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 bg-slate-50 rounded-xl px-4 py-3">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#0eaa99]" />
-                Typically responds within 24 hrs
+                {t.listings.typicallyResponds}
               </div>
 
               <div className="space-y-3">
                 <button className="w-full py-3.5 bg-slate-950 hover:bg-[#0eaa99] text-white text-[10px] font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 transition-all duration-300">
                   <MessageSquare className="w-3.5 h-3.5" />
-                  Send Enquiry
+                  {t.listings.sendEnquiry}
                 </button>
                 <button className="w-full py-3.5 bg-white border border-slate-200 hover:border-[#0eaa99]/40 hover:text-[#0eaa99] text-slate-600 text-[10px] font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 transition-all duration-300">
                   <Video className="w-3.5 h-3.5" />
-                  Request Viewing
+                  {t.listings.requestViewing}
                 </button>
                 <button className="w-full py-3.5 bg-white border border-slate-200 hover:border-[#0eaa99]/40 hover:text-[#0eaa99] text-slate-600 text-[10px] font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 transition-all duration-300">
                   <Car className="w-3.5 h-3.5" />
-                  Book In-Person Visit
+                  {t.listings.bookVisit}
                 </button>
               </div>
 
@@ -424,7 +472,7 @@ function ListingView({ listing }: ListingViewProps) {
               href="/listings"
               className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-300 hover:text-[#0eaa99] transition-colors"
             >
-              <ArrowLeft className="w-3.5 h-3.5" /> Back to all listings
+              <ArrowLeft className="w-3.5 h-3.5" /> {t.listings.backToListings}
             </Link>
           </div>
         </div>
