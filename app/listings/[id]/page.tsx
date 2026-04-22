@@ -1,17 +1,19 @@
+import { Metadata } from 'next'
 import Navbar from '@/components/navigation/navbar'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import prisma from '@/lib/prisma'
 import {
   MapPin, BedDouble, Bath, Square, CheckCircle2,
-  ArrowLeft, Tag, Video, MessageSquare, ChevronRight,
-  Wifi, Car, Zap, ShieldCheck, CalendarDays,
+  ArrowLeft, ChevronRight,
+  Wifi, Zap, ShieldCheck, CalendarDays,
 } from 'lucide-react'
 import ImageGallery from './_components/image-gallery'
 import VideoTour from './_components/video-tour'
 import MortgageCalculator from './_components/mortgage-calculator'
 import EPCRating from './_components/epc-rating'
 import SimilarListings from './_components/similar-listings'
+import ListingContact from './_components/listing-contact'
 import { getServerT } from '@/lib/i18n/server'
 import { cookies } from 'next/headers'
 import { translateBatch, type LanguageCode } from '@/lib/translate'
@@ -37,6 +39,31 @@ function extractNumericPrice(price: string): number {
 function extractCurrencySymbol(price: string): string {
   const match = price.match(/^[^0-9\s]+/)
   return match ? match[0].trim() : ''
+}
+
+// ── Metadata ──────────────────────────────────────────────────────────────────
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const listing = MOCK_LISTINGS.find((l) => l.id === id)
+
+  if (!listing) return { title: "Listing Not Found" }
+
+  const pType = listing.propertyType.toLowerCase().trim()
+  const image = (PROPERTY_TYPE_IMAGES[pType] || PROPERTY_TYPE_IMAGES.residential)[0]
+
+  return {
+    title: `${listing.title} in ${listing.city}`,
+    description: listing.description.substring(0, 160),
+    openGraph: {
+      title: `${listing.title} | Kallipas Global`,
+      description: listing.description.substring(0, 160),
+      images: [{ url: image }],
+    },
+  }
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -99,6 +126,7 @@ export default async function ListingDetailPage({
           verified: mock.verified,
           seller: mock.seller,
           sellerRole: 'Member',
+          sellerAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
           images,
           videos,
           epc,
@@ -171,6 +199,7 @@ export default async function ListingDetailPage({
         verified: dbListing.owner?.isVerified ?? false,
         seller: dbListing.owner?.fullName ?? 'Anonymous',
         sellerRole: dbListing.owner?.role ?? 'Member',
+        sellerAvatar: dbListing.owner?.avatarUrl,
         images,
         videos,
         epc,
@@ -209,6 +238,7 @@ type ListingViewProps = {
     verified: boolean
     seller: string
     sellerRole: string
+    sellerAvatar?: string | null
     images: string[]
     videos: VideoItem[]
     epc: EPCData
@@ -221,10 +251,6 @@ function ListingView({ t, listing }: ListingViewProps) {
   const catLabel   = PROPERTY_CATEGORIES[listing.propertyType] ?? listing.propertyType
   const isSale     = listing.listingType === 'sale'
 
-  const sellerRoleLabel = typeof listing.sellerRole === 'string'
-    ? listing.sellerRole.replace(/_/g, ' ')
-    : String(listing.sellerRole)
-
   return (
     <div className="min-h-screen bg-[#F9FAFB]">
       <Navbar />
@@ -233,8 +259,8 @@ function ListingView({ t, listing }: ListingViewProps) {
 
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-8">
-          <Link href="/listings" className="hover:text-[#0eaa99] transition-colors flex items-center gap-1.5">
-            <ArrowLeft className="w-3 h-3" /> {t.listings.backToListings}
+          <Link href="/listings" className="hover:text-[#0eaa99] transition-colors flex items-center gap-1.5 cursor-pointer group">
+            <ArrowLeft className="w-3 h-3 cursor-pointer group-hover:-translate-x-0.5 transition-transform" /> {t.listings.backToListings}
           </Link>
           <ChevronRight className="w-3 h-3 text-slate-200" />
           <span className="text-slate-600 truncate max-w-xs">{listing.title}</span>
@@ -365,10 +391,10 @@ function ListingView({ t, listing }: ListingViewProps) {
                 { icon: Wifi, label: 'Virtual Tour', sub: 'Available' },
                 { icon: Zap, label: 'EPC Rating', sub: listing.epc.current },
               ].map(({ icon: Icon, label, sub }) => (
-                <div key={label} className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm flex flex-col gap-2">
-                  <Icon className="w-4 h-4 text-[#0eaa99]" />
-                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">{label}</p>
-                  <p className="font-black text-slate-800 text-sm">{sub}</p>
+                <div key={label} className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm flex flex-col gap-2 cursor-pointer hover:bg-slate-50 transition-all active:scale-[0.98]">
+                  <Icon className="w-4 h-4 text-[#0eaa99] cursor-pointer" />
+                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 cursor-pointer">{label}</p>
+                  <p className="font-black text-slate-800 text-sm cursor-pointer">{sub}</p>
                 </div>
               ))}
             </div>
@@ -417,47 +443,8 @@ function ListingView({ t, listing }: ListingViewProps) {
               )}
             </div>
 
-            {/* CTA card */}
-            <div className="bg-white rounded-[2rem] border border-slate-100 p-8 shadow-sm space-y-5 sticky top-28">
-              <div>
-                <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-3">{t.listings.listedBy}</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-2xl bg-[#0eaa99]/10 flex items-center justify-center flex-shrink-0">
-                    <Tag className="w-4 h-4 text-[#0eaa99]" />
-                  </div>
-                  <div>
-                    <p className="font-black text-slate-900 tracking-tight">{listing.seller}</p>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 capitalize">
-                      {sellerRoleLabel}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 bg-slate-50 rounded-xl px-4 py-3">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#0eaa99]" />
-                {t.listings.typicallyResponds}
-              </div>
-
-              <div className="space-y-3">
-                <button className="w-full py-3.5 bg-slate-950 hover:bg-[#0eaa99] text-white text-[10px] font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 transition-all duration-300">
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  {t.listings.sendEnquiry}
-                </button>
-                <button className="w-full py-3.5 bg-white border border-slate-200 hover:border-[#0eaa99]/40 hover:text-[#0eaa99] text-slate-600 text-[10px] font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 transition-all duration-300">
-                  <Video className="w-3.5 h-3.5" />
-                  {t.listings.requestViewing}
-                </button>
-                <button className="w-full py-3.5 bg-white border border-slate-200 hover:border-[#0eaa99]/40 hover:text-[#0eaa99] text-slate-600 text-[10px] font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 transition-all duration-300">
-                  <Car className="w-3.5 h-3.5" />
-                  {t.listings.bookVisit}
-                </button>
-              </div>
-
-              <p className="text-[9px] font-bold text-slate-300 text-center leading-relaxed">
-                By contacting, you agree to our Terms & Privacy Policy.
-              </p>
-            </div>
+            {/* CTA card (Functional) */}
+            <ListingContact t={t} listing={listing} />
 
             {/* Mortgage calculator — only for sale listings */}
             {isSale && listing.numericPrice > 0 && (
@@ -470,9 +457,9 @@ function ListingView({ t, listing }: ListingViewProps) {
             {/* Back */}
             <Link
               href="/listings"
-              className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-300 hover:text-[#0eaa99] transition-colors"
+              className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-300 hover:text-[#0eaa99] transition-colors cursor-pointer group"
             >
-              <ArrowLeft className="w-3.5 h-3.5" /> {t.listings.backToListings}
+              <ArrowLeft className="w-3.5 h-3.5 cursor-pointer group-hover:-translate-x-0.5 transition-transform" /> {t.listings.backToListings}
             </Link>
           </div>
         </div>

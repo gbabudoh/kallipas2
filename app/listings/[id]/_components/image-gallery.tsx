@@ -39,7 +39,10 @@ export default function ImageGallery({ images, fallback, title }: Props) {
 
   const handleErr = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const img = e.currentTarget
-    if (img.src !== fallback) img.src = fallback
+    if (img.src !== fallback) {
+      console.log('ImageGallery: loading fallback for', img.src)
+      img.src = fallback
+    }
   }
 
   // Use fallback as image[0] if array is empty
@@ -109,24 +112,30 @@ export default function ImageGallery({ images, fallback, title }: Props) {
               className="flex gap-2 overflow-x-auto pb-1"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#e2e8f0 transparent' }}
             >
-              {allImages.map((img, i) => (
+              {allImages.filter(Boolean).map((img, i) => (
                 <button
-                  key={i}
+                  key={`${img}-${i}`}
                   onClick={() => setActive(i)}
-                  className={`relative flex-shrink-0 w-20 h-14 rounded-xl overflow-hidden transition-all duration-200 ${
+                  className={`relative flex-shrink-0 w-20 h-14 rounded-xl overflow-hidden transition-all duration-200 cursor-pointer ${
                     active === i
-                      ? 'ring-2 ring-[#0eaa99] ring-offset-1 scale-105 opacity-100'
-                      : 'opacity-60 hover:opacity-90 hover:scale-105'
+                      ? 'ring-2 ring-[#0eaa99] ring-offset-1 scale-105 opacity-100 z-10'
+                      : 'opacity-60 hover:opacity-100 hover:scale-105'
                   }`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={img}
                     alt={`Photo ${i + 1}`}
-                    onError={handleErr}
+                    loading={i === 0 ? "eager" : "lazy"}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (target.src !== fallback) {
+                        target.src = fallback;
+                      }
+                    }}
                   />
-                  <div className={`absolute bottom-1 right-1 text-[8px] font-black px-1 rounded ${
+                  <div className={`absolute bottom-1 right-1 text-[8px] font-black px-1 rounded cursor-pointer ${
                     active === i ? 'bg-[#0eaa99] text-white' : 'bg-black/40 text-white'
                   }`}>
                     {i + 1}

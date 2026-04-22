@@ -63,7 +63,7 @@ export default function MobileDashboardNav({
         </div>
 
         <Link href="/" className="absolute left-1/2 -translate-x-1/2 hover:opacity-80 transition-opacity">
-          <Image src="/logo.png" alt="Kallipas" width={80} height={24} priority className="h-6 w-auto object-contain" />
+          <Image src="/logo.png" alt="Kallipas" width={80} height={24} priority className="h-6 w-auto object-contain" style={{ width: 'auto' }} />
         </Link>
 
         <div className="flex items-center gap-2">

@@ -1,5 +1,11 @@
+import { Metadata } from 'next'
 import Navbar from "@/components/navigation/navbar"
 import { MapPin, Star, CheckCircle2, MessageSquare, Calendar } from "lucide-react"
+
+export const metadata: Metadata = {
+  title: "Professional Directory",
+  description: "Connect with verified private sellers, independent realtors, and legal professionals across the global real estate market.",
+}
 
 const CATEGORY_LABELS: Record<string, string> = {
   PRIVATE_SELLER:     'Private Sellers',
@@ -228,7 +234,7 @@ export default async function AgentsPage({
             {members.map((member) => (
               <div
                 key={member.id}
-                className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm hover:shadow-xl hover:shadow-[#0eaa99]/10 hover:border-[#0eaa99]/30 transition-all duration-500 flex flex-col gap-6"
+                className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm hover:shadow-xl hover:shadow-[#0eaa99]/10 hover:border-[#0eaa99]/30 transition-all duration-500 flex flex-col gap-6 cursor-pointer group/card"
               >
                 {/* Top row */}
                 <div className="flex items-start gap-4">
@@ -236,19 +242,19 @@ export default async function AgentsPage({
                   <img
                     src={member.avatar}
                     alt={member.name}
-                    className="w-14 h-14 rounded-2xl bg-slate-100 flex-shrink-0"
+                    className="w-14 h-14 rounded-2xl bg-slate-100 flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <h3 className="font-black text-slate-900 tracking-tight truncate">{member.name}</h3>
                       {member.verified && (
-                        <CheckCircle2 className="w-4 h-4 text-[#0eaa99] flex-shrink-0" />
+                        <CheckCircle2 className="w-4 h-4 text-[#0eaa99] flex-shrink-0 cursor-pointer" />
                       )}
                     </div>
                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{member.title}</p>
-                    <div className="flex items-center gap-1.5 mt-1.5">
-                      <MapPin className="w-3 h-3 text-slate-300 flex-shrink-0" />
-                      <span className="text-xs text-slate-400 font-medium">{member.location}</span>
+                    <div className="flex items-center gap-1.5 mt-1.5 cursor-pointer group/loc">
+                      <MapPin className="w-3 h-3 text-slate-300 flex-shrink-0 group-hover/loc:text-[#0eaa99] transition-colors cursor-pointer" />
+                      <span className="text-xs text-slate-400 font-medium group-hover/loc:text-slate-600 transition-colors cursor-pointer">{member.location}</span>
                     </div>
                   </div>
                 </div>
@@ -261,7 +267,7 @@ export default async function AgentsPage({
                   {member.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-3 py-1 bg-slate-50 border border-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-400"
+                      className="px-3 py-1 bg-slate-50 border border-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-400 cursor-pointer hover:bg-[#0eaa99]/10 hover:text-[#0eaa99] transition-all"
                     >
                       {tag}
                     </span>
@@ -270,20 +276,20 @@ export default async function AgentsPage({
 
                 {/* Rating + joined */}
                 <div className="flex items-center justify-between text-[11px] font-black uppercase tracking-widest">
-                  <div className="flex items-center gap-1.5 text-amber-400">
-                    <Star className="w-3.5 h-3.5 fill-amber-400" />
-                    <span className="text-slate-700">{member.rating}</span>
-                    <span className="text-slate-300">({member.reviews})</span>
+                  <div className="flex items-center gap-1.5 text-amber-400 cursor-pointer hover:scale-105 transition-transform origin-left">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 cursor-pointer" />
+                    <span className="text-slate-700 cursor-pointer">{member.rating}</span>
+                    <span className="text-slate-300 cursor-pointer">({member.reviews})</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-slate-300">
-                    <Calendar className="w-3.5 h-3.5" />
-                    <span>Joined {member.joined}</span>
+                  <div className="flex items-center gap-1.5 text-slate-300 cursor-pointer">
+                    <Calendar className="w-3.5 h-3.5 cursor-pointer" />
+                    <span className="cursor-pointer">Joined {member.joined}</span>
                   </div>
                 </div>
 
                 {/* CTA */}
-                <button className="w-full py-3.5 bg-slate-950 hover:bg-[#0eaa99] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
-                  <MessageSquare className="w-3.5 h-3.5" />
+                <button className="w-full py-3.5 bg-slate-950 hover:bg-[#0eaa99] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]">
+                  <MessageSquare className="w-3.5 h-3.5 cursor-pointer" />
                   Contact
                 </button>
               </div>

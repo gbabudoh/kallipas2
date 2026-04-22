@@ -125,16 +125,46 @@ export type VideoItem = {
 // Mock video tours per property type
 export function getMockVideos(propertyType: string, thumb: string): VideoItem[] {
   const base: VideoItem[] = [
-    { id: 'v1', label: 'Property Walkthrough', duration: '3:42', thumb },
+    { 
+      id: 'v1', 
+      label: 'Property Walkthrough', 
+      duration: '3:42', 
+      thumb,
+      embedUrl: 'https://www.youtube.com/embed/S_vO0m7NHD8?autoplay=1' // Luxury real estate walkthrough
+    },
   ]
 
   if (['residential', 'holiday'].includes(propertyType)) {
-    base.push({ id: 'v2', label: 'Neighbourhood & Area Guide', duration: '2:15', thumb })
-    base.push({ id: 'v3', label: '360° Virtual Tour', duration: '5:08', thumb })
+    base.push({ 
+      id: 'v2', 
+      label: 'Neighbourhood & Area Guide', 
+      duration: '2:15', 
+      thumb: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&q=80', // London
+      embedUrl: 'https://www.youtube.com/embed/X8zLJlU_-60?autoplay=1'
+    })
+    base.push({ 
+      id: 'v3', 
+      label: '360° Virtual Tour', 
+      duration: '5:08', 
+      thumb: 'https://images.unsplash.com/photo-1449156001437-3a16d1daae39?w=800&q=80',
+      embedUrl: 'https://www.youtube.com/embed/M7XWZEu6VfI?autoplay=1' // 360 tour example
+    })
   } else if (['commercial', 'industrial'].includes(propertyType)) {
-    base.push({ id: 'v2', label: 'Full Floor Plan Walkthrough', duration: '4:20', thumb })
+    base.push({ 
+      id: 'v2', 
+      label: 'Full Floor Plan Walkthrough', 
+      duration: '4:20', 
+      thumb,
+      embedUrl: 'https://www.youtube.com/embed/5q9X9Y_M3_0?autoplay=1'
+    })
   } else {
-    base.push({ id: 'v2', label: 'Drone Aerial Footage', duration: '1:55', thumb })
+    base.push({ 
+      id: 'v2', 
+      label: 'Drone Aerial Footage', 
+      duration: '1:55', 
+      thumb,
+      embedUrl: 'https://www.youtube.com/embed/2vL8T-N7n_I?autoplay=1'
+    })
   }
 
   return base

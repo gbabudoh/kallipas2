@@ -90,8 +90,8 @@ export default function LoginPage() {
                   width={160}
                   height={48}
                   priority
-                  className="object-contain"
-                  style={{ width: 'auto', height: 'auto' }}
+                  className="w-40 h-auto object-contain"
+                  style={{ height: 'auto' }}
                 />
               </Link>
             </div>

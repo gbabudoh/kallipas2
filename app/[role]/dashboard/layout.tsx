@@ -181,7 +181,7 @@ export default async function DashboardLayout({
               height={46}
               priority
               className="w-40 h-auto object-contain transition-transform duration-700 group-hover:scale-110"
-              style={{ width: 'auto', height: 'auto' }}
+              style={{ height: 'auto' }}
             />
           </Link>
           <div className="absolute -bottom-px left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#0eaa99]/30 to-transparent" />
