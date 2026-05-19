@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Search, Globe, Shield, Zap, ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import type { GlobalSiteSettings } from '@/types/settings'
@@ -8,6 +10,13 @@ import { useT } from '@/context/language-context'
 export default function Hero({ settings }: { settings: GlobalSiteSettings }) {
   const t = useT()
   const h = t.home
+  const router = useRouter()
+  const [query, setQuery] = useState('')
+
+  const handleSearch = () => {
+    const q = query.trim()
+    router.push(q ? `/listings?q=${encodeURIComponent(q)}` : '/listings')
+  }
   return (
     <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-[#F2EAE0]/30 min-h-screen flex items-center">
       {/* Dynamic Background Accents */}
@@ -44,13 +53,19 @@ export default function Hero({ settings }: { settings: GlobalSiteSettings }) {
               <div className="relative flex flex-col md:flex-row items-center gap-2 p-2 bg-white/70 backdrop-blur-2xl border border-white/80 rounded-[2rem] shadow-xl">
                 <div className="flex-1 w-full relative">
                   <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                     placeholder={h.searchPlaceholder}
                     className="w-full bg-transparent border-none focus:ring-0 py-4 pl-12 pr-4 text-slate-800 text-lg placeholder:text-slate-400 font-medium"
                   />
                 </div>
-                <button className="w-full md:w-auto px-8 py-4 bg-[#0eab9b] hover:bg-[#0ca191] text-white font-bold text-lg rounded-[1.5rem] transition-all flex items-center justify-center gap-2 group/btn">
+                <button
+                  onClick={handleSearch}
+                  className="w-full md:w-auto px-8 py-4 bg-[#0eab9b] hover:bg-[#0ca191] text-white font-bold text-lg rounded-[1.5rem] transition-all flex items-center justify-center gap-2 group/btn"
+                >
                   {h.searchBtn}
                   <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
                 </button>
